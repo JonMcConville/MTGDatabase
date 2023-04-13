@@ -11,15 +11,14 @@ library(pivottabler)
 
 ##Reading in Data ----
 
-setwd("C:/SQLd/mtg/mtg")
 cards <- read.csv("cards.csv")
-Ghired <-read.csv("C:/SQLd/mtg/mtg/Decks/Ghired.csv")
-Dina <-read.csv("C:/SQLd/mtg/mtg/Decks/Dina.csv")
-Lathril <-read.csv("C:/SQLd/mtg/mtg/Decks/lathril.csv")
-Titania <-read.csv("C:/SQLd/mtg/mtg/Decks/Titania.csv")
-Magda <-read.csv("C:/SQLd/mtg/mtg/Decks/Magda.csv")
-Mizzix <-read.csv("C:/SQLd/mtg/mtg/Decks/Mizzix.csv")
-Liesa <-read.csv("C:/SQLd/mtg/mtg/Decks/Liesa.csv")
+Ghired <-read.csv("Decks/Ghired.csv")
+Dina <-read.csv("Decks/Dina.csv")
+Lathril <-read.csv("Decks/lathril.csv")
+Titania <-read.csv("Decks/Titania.csv")
+Magda <-read.csv("Decks/Magda.csv")
+Mizzix <-read.csv("Decks/Mizzix.csv")
+Liesa <-read.csv("Decks/Liesa.csv")
 
 
 Ghired$commander_deck <-c("Ghired")
@@ -34,7 +33,7 @@ MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa)
 
 
 
-TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
+## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
 
 ##Processing Files ----
 
@@ -128,7 +127,8 @@ Master_Data %>%
   arrange(manaValue) %>%
   count (types)
 
-
+Master_Data %>%
+  count (commander_deck)
 
 
 
@@ -196,4 +196,8 @@ colnames(everything_pivot)[colnames(everything_pivot) %in% c("")] <- c("color")
 ggplot(everything_pivot,aes(x = Deck_Name, y = ManaScore)) +
   geom_boxplot() +
   coord_flip()
+
+
+qhpvt(Master_Data_Landless, "commander_deck", "manaValue", "n()")
+
 
