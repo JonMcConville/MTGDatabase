@@ -1,4 +1,4 @@
-## Cut down databse to simic commons ----
+## Cut down database to simic commons ----
 
 Simic_pauper_cards <- cards %>%
   filter(rarity == "common") %>%
@@ -18,8 +18,14 @@ Simic_pauper_cards <- cards %>%
   arrange(desc(id)) %>%
   distinct(name, .keep_all = TRUE)
 
-Draw_cards <- Simic_pauper_cards[grep("draw", Simic_pauper_cards$originalText),]
+## Pull out cards with useful properties ----
 
-Plus_cards <- Simic_pauper_cards[grep("\\+", Simic_pauper_cards$originalText),]
+Draw_cards <- Simic_pauper_cards[grep("draw", Simic_pauper_cards$text,ignore.case=TRUE),]
 
-Proliferate_cards <- Simic_pauper_cards[grep("Proliferate", Simic_pauper_cards$keywords),]
+Plus_cards <- Simic_pauper_cards[grep("\\+", Simic_pauper_cards$text),]
+
+Proliferate_cards <- Simic_pauper_cards[grep("Proliferate", Simic_pauper_cards$keywords,ignore.case=TRUE),]
+
+All_Simic_cards <- rbind(Draw_cards, Plus_cards, Proliferate_cards)
+
+write.csv(All_Simic_cards, "Pauper_card_list.csv", row.names=FALSE)
