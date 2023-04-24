@@ -19,6 +19,7 @@ Titania <-read.csv("Decks/Titania.csv")
 Magda <-read.csv("Decks/Magda.csv")
 Mizzix <-read.csv("Decks/Mizzix.csv")
 Liesa <-read.csv("Decks/Liesa.csv")
+Lorescale <-read.csv("Decks/Lorescale.csv")
 
 
 Ghired$commander_deck <-c("Ghired")
@@ -28,8 +29,9 @@ Titania$commander_deck <-c("Titania")
 Magda$commander_deck <-c("Magda")
 Mizzix$commander_deck <-c("Mizzix")
 Liesa$commander_deck <-c("Liesa")
+Lorescale$commander_deck <-c("Lorescale")
 
-MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa)
+MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale)
 
 
 
@@ -110,11 +112,17 @@ Master_Data_Landless <- Master_Data %>%
 
 
 Master_Data %>%
-  filter(commander_deck == "Liesa") %>%
+  filter(commander_deck == "Lorescale") %>%
   select(card_name, manaCost, types, manaValue) %>%
   arrange(types, card_name) %>%
   arrange(manaValue) %>%
   count (types)
+
+
+Master_Data %>%
+  filter(commander_deck == "Lorescale") %>%
+  select(card_name)
+
 
 
 ##Processing Master Frame ----
@@ -142,7 +150,8 @@ Salt_Score <- data.frame( Deck_Name = c("Ghired", "Dina", "Lathril", "Titania", 
                                         mean(Titania_Data$edhrecSaltiness[Titania_Data$types != "Land"], na.rm = TRUE),
                                         mean(Mizzix_Data$edhrecSaltiness[Mizzix_Data$types != "Land"], na.rm = TRUE),
                                         mean(Liesa_Data$edhrecSaltiness[Liesa_Data$types != "Land"], na.rm = TRUE),
-                                        mean(Magda_Data$edhrecSaltiness[Magda_Data$types != "Land"], na.rm = TRUE)))
+                                        mean(Magda_Data$edhrecSaltiness[Magda_Data$types != "Land"], na.rm = TRUE),
+                                        mean(Lorescale_Data$edhrecSaltiness[Lorescale_Data$types != "Land"], na.rm = TRUE)))
 
 
 barplot(Salt_Score$SaltScore, names.arg = Salt_Score$Deck_Name, xlab = "Deck", ylab = "Saltiness", col = "green")
@@ -155,7 +164,8 @@ Mana_Score <- data.frame( Deck_Name = c("Ghired", "Dina", "Lathril", "Titania", 
                                         mean(Titania_Data$manaValue[Titania_Data$types != "Land"], na.rm = TRUE),
                                         mean(Mizzix_Data$manaValue[Mizzix_Data$types != "Land"], na.rm = TRUE),
                                         mean(Liesa_Data$manaValue[Liesa_Data$types != "Land"], na.rm = TRUE),
-                                        mean(Magda_Data$manaValue[Magda_Data$types != "Land"], na.rm = TRUE)))
+                                        mean(Magda_Data$manaValue[Magda_Data$types != "Land"], na.rm = TRUE),
+                                        mean(Lorecale_Data$manaValue[Lorescale_Data$types != "Land"], na.rm = TRUE)))
 
 Mana_Score2 <- Master_Data %>%
   filter(types != "Land") %>%
