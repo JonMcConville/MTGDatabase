@@ -112,7 +112,8 @@ Master_Data_Landless <- Master_Data %>%
 
 
 Master_Data %>%
-  filter(commander_deck == "Lorescale") %>%
+  filter(commander_deck == "Ghired") %>%
+  filter(types!= "Land") %>%
   select(card_name, manaCost, types, manaValue) %>%
   arrange(types, card_name) %>%
   arrange(manaValue) %>%
@@ -193,6 +194,13 @@ ggplot(Master_Data, aes(x = types, fill=types)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 
+
+ggplot( Master_Data %>% 
+          filter(types!= "Land") %>%
+  count(commander_deck, types, manaValue), 
+  aes(manaValue, n, fill = types)) +
+  geom_bar(stat="identity") +
+  facet_wrap(~ commander_deck)
 
 
 ## Check cards that approximately match wordstring ----
