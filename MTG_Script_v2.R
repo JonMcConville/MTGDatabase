@@ -20,6 +20,7 @@ Magda <-read.csv("Decks/Magda.csv")
 Mizzix <-read.csv("Decks/Mizzix.csv")
 Liesa <-read.csv("Decks/Liesa.csv")
 Lorescale <-read.csv("Decks/Lorescale.csv")
+Dina_upgrade <-read.csv("Decks/Dina_Upgrade.csv")
 
 
 Ghired$commander_deck <-c("Ghired")
@@ -30,8 +31,9 @@ Magda$commander_deck <-c("Magda")
 Mizzix$commander_deck <-c("Mizzix")
 Liesa$commander_deck <-c("Liesa")
 Lorescale$commander_deck <-c("Lorescale")
+Dina_upgrade$commander_deck <-c("Dina_upgrade")
 
-MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale)
+MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade)
 
 
 
@@ -112,8 +114,8 @@ Master_Data_Landless <- Master_Data %>%
 
 
 Master_Data %>%
-  filter(commander_deck == "Ghired") %>%
-  filter(types!= "Land") %>%
+  filter(commander_deck == "Dina_upgrade") %>%
+#  filter(types!= "Land") %>%
   select(card_name, manaCost, types, manaValue) %>%
   arrange(types, card_name) %>%
   arrange(manaValue) %>%
@@ -217,5 +219,30 @@ ggplot(everything_pivot,aes(x = Deck_Name, y = ManaScore)) +
 
 
 qhpvt(Master_Data_Landless, "commander_deck", "manaValue", "n()")
+
+
+write.csv(
+merge(Dina_upgrade %>% 
+        filter(!Dina_upgrade$card_name %in% Dina$card_name), 
+      cards_slim, 
+      by.x = 'card_name', 
+      by.y = 'name', 
+      all.x = TRUE) %>%
+  arrange(types, card_name),
+  "Cards_to_add.csv")
+
+write.csv(
+merge(Dina %>% 
+        filter(!Dina$card_name %in% Dina_upgrade$card_name), 
+      cards_slim, 
+      by.x = 'card_name', 
+      by.y = 'name', 
+      all.x = TRUE) %>%
+  arrange(types, card_name),
+  "Cards_to_cut.csv")
+
+
+Dina_upgrade %>% 
+  filter(!Dina_upgrade$card_name %in% Dina$card_name)
 
 
