@@ -8,6 +8,7 @@ library(reshape2)
 library(tidyr)
 library(wesanderson)
 library(pivottabler)
+library(shiny)
 
 ##Reading in Data ----
 
@@ -23,19 +24,23 @@ Lorescale <-read.csv("Decks/Lorescale.csv")
 Dina_upgrade <-read.csv("Decks/Dina_Upgrade.csv")
 
 
-Ghired$commander_deck <-c("Ghired")
-Dina$commander_deck <-c("Dina")
-Lathril$commander_deck <-c("Lathril")
-Titania$commander_deck <-c("Titania")
-Magda$commander_deck <-c("Magda")
-Mizzix$commander_deck <-c("Mizzix")
-Liesa$commander_deck <-c("Liesa")
-Lorescale$commander_deck <-c("Lorescale")
+Ghired$commander_deck <-c("Ghired, Conclave Exile")
+Dina$commander_deck <-c("Dina, Soul Steeper")
+Lathril$commander_deck <-c("Lathril, Blade of the Elves")
+Titania$commander_deck <-c("Titania, Protector of Argoth")
+Magda$commander_deck <-c("Magda, Brazen Outlaw")
+Mizzix$commander_deck <-c("Mizzix of the Izmagnus")
+Liesa$commander_deck <-c("Liesa, Shroud of Dusk")
+Lorescale$commander_deck <-c("Lorescale Coatl")
 Dina_upgrade$commander_deck <-c("Dina_upgrade")
 
 MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade)
 
 
+MasterFrame %>% filter(commander == "Y") %>%
+  select(card_name)
+
+#colourGuilds <- c()
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
 
@@ -61,53 +66,41 @@ cards_slim <- cards %>%
 
 ##Splitting Mana Cost column into Constituent Mana Costs
 
-GreenMana = str_count(cards_slim$manaCost,"\\{G\\}")
-BlackMana = str_count(cards_slim$manaCost,"\\{B\\}")
-BlueMana = str_count(cards_slim$manaCost,"\\{U\\}")
-WhiteMana = str_count(cards_slim$manaCost,"\\{W\\}")
-RedMana = str_count(cards_slim$manaCost,"\\{R\\}")
-GreenBlackMana = str_count(cards_slim$manaCost,"\\{G/B\\}") + str_count(cards_slim$manaCost,"\\{B/G\\}")
-GreenBlueMana = str_count(cards_slim$manaCost,"\\{G/U\\}") + str_count(cards_slim$manaCost,"\\{U/G\\}")
-GreenWhiteMana = str_count(cards_slim$manaCost,"\\{G/W\\}") + str_count(cards_slim$manaCost,"\\{W/G\\}")
-GreenRedMana = str_count(cards_slim$manaCost,"\\{G/R\\}") + str_count(cards_slim$manaCost,"\\{R/G\\}")
-BlackBlueMana = str_count(cards_slim$manaCost,"\\{B/U\\}") + str_count(cards_slim$manaCost,"\\{U/B\\}")
-BlackWhiteMana = str_count(cards_slim$manaCost,"\\{B/W\\}") + str_count(cards_slim$manaCost,"\\{W/B\\}")
-BlackRedMana = str_count(cards_slim$manaCost,"\\{B/R\\}") + str_count(cards_slim$manaCost,"\\{R/B\\}")
-BlueWhiteMana = str_count(cards_slim$manaCost,"\\{R/W\\}") + str_count(cards_slim$manaCost,"\\{W/U\\}")
-BlueRedMana = str_count(cards_slim$manaCost,"\\{U/R\\}") + str_count(cards_slim$manaCost,"\\{R/U\\}")
-WhiteRedMana = str_count(cards_slim$manaCost,"\\{W/R\\}") + str_count(cards_slim$manaCost,"\\{R/W\\}")
+cards_slim <- cbind(cards_slim, GreenMana = str_count(cards_slim$manaCost,"\\{G\\}"))
+cards_slim <- cbind(cards_slim, BlackMana = str_count(cards_slim$manaCost,"\\{B\\}"))
+cards_slim <- cbind(cards_slim, BlueMana = str_count(cards_slim$manaCost,"\\{U\\}"))
+cards_slim <- cbind(cards_slim, WhiteMana = str_count(cards_slim$manaCost,"\\{W\\}"))
+cards_slim <- cbind(cards_slim, RedMana = str_count(cards_slim$manaCost,"\\{R\\}"))
+cards_slim <- cbind(cards_slim, GreenBlackMana = str_count(cards_slim$manaCost,"\\{G/B\\}") + str_count(cards_slim$manaCost,"\\{B/G\\}"))
+cards_slim <- cbind(cards_slim, GreenBlueMana = str_count(cards_slim$manaCost,"\\{G/U\\}") + str_count(cards_slim$manaCost,"\\{U/G\\}"))
+cards_slim <- cbind(cards_slim, GreenWhiteMana = str_count(cards_slim$manaCost,"\\{G/W\\}") + str_count(cards_slim$manaCost,"\\{W/G\\}"))
+cards_slim <- cbind(cards_slim, GreenRedMana = str_count(cards_slim$manaCost,"\\{G/R\\}") + str_count(cards_slim$manaCost,"\\{R/G\\}"))
+cards_slim <- cbind(cards_slim, BlackBlueMana = str_count(cards_slim$manaCost,"\\{B/U\\}") + str_count(cards_slim$manaCost,"\\{U/B\\}"))
+cards_slim <- cbind(cards_slim, BlackWhiteMana = str_count(cards_slim$manaCost,"\\{B/W\\}") + str_count(cards_slim$manaCost,"\\{W/B\\}"))
+cards_slim <- cbind(cards_slim, BlackRedMana = str_count(cards_slim$manaCost,"\\{B/R\\}") + str_count(cards_slim$manaCost,"\\{R/B\\}"))
+cards_slim <- cbind(cards_slim, BlueWhiteMana = str_count(cards_slim$manaCost,"\\{R/W\\}") + str_count(cards_slim$manaCost,"\\{W/U\\}"))
+cards_slim <- cbind(cards_slim, BlueRedMana = str_count(cards_slim$manaCost,"\\{U/R\\}") + str_count(cards_slim$manaCost,"\\{R/U\\}"))
+cards_slim <- cbind(cards_slim, WhiteRedMana = str_count(cards_slim$manaCost,"\\{W/R\\}") + str_count(cards_slim$manaCost,"\\{R/W\\}"))
 
-ColourlessMana = str_count(cards_slim$manaCost,"\\{1\\}") + str_count(cards_slim$manaCost,"\\{2\\}")*2 + str_count(cards_slim$manaCost,"\\{3\\}")*3 + str_count(cards_slim$manaCost,"\\{4\\}")*4 + 
+cards_slim <- cbind(cards_slim, ColourlessMana = str_count(cards_slim$manaCost,"\\{1\\}") + str_count(cards_slim$manaCost,"\\{2\\}")*2 + str_count(cards_slim$manaCost,"\\{3\\}")*3 + str_count(cards_slim$manaCost,"\\{4\\}")*4 + 
   str_count(cards_slim$manaCost,"\\{5\\}")*5 + str_count(cards_slim$manaCost,"\\{6\\}")*6 + str_count(cards_slim$manaCost,"\\{7\\}")*7 + str_count(cards_slim$manaCost,"\\{8\\}")*8 + 
   str_count(cards_slim$manaCost,"\\{9\\}")*9 + str_count(cards_slim$manaCost,"\\{10\\}")*10 + str_count(cards_slim$manaCost,"\\{11\\}")*11 + str_count(cards_slim$manaCost,"\\{12\\}")*12 + 
-  str_count(cards_slim$manaCost,"\\{13\\}")*13 + str_count(cards_slim$manaCost,"\\{14\\}")*14 + str_count(cards_slim$manaCost,"\\{15\\}")*15 + str_count(cards_slim$manaCost,"\\{16\\}")*16
+  str_count(cards_slim$manaCost,"\\{13\\}")*13 + str_count(cards_slim$manaCost,"\\{14\\}")*14 + str_count(cards_slim$manaCost,"\\{15\\}")*15 + str_count(cards_slim$manaCost,"\\{16\\}")*16)
 
-ManaDiscrep = cards_slim$faceManaValue - GreenMana - BlueMana - BlackMana - WhiteMana - RedMana - ColourlessMana - GreenBlackMana - GreenBlueMana - GreenWhiteMana - GreenRedMana - BlackBlueMana -
-  BlackWhiteMana - BlackRedMana - BlueWhiteMana - BlueRedMana - WhiteRedMana
+cards_slim <- cbind(cards_slim, ManaDiscrep = cards_slim$faceManaValue - cards_slim$GreenMana - cards_slim$BlueMana - cards_slim$BlackMana - cards_slim$WhiteMana - cards_slim$RedMana - cards_slim$ColourlessMana - cards_slim$GreenBlackMana - cards_slim$GreenBlueMana - cards_slim$GreenWhiteMana - cards_slim$GreenRedMana - cards_slim$BlackBlueMana -
+                      cards_slim$BlackWhiteMana - cards_slim$BlackRedMana - cards_slim$BlueWhiteMana - cards_slim$BlueRedMana - cards_slim$WhiteRedMana)
 
-cards_slim <- cbind(cards_slim, GreenMana)
-cards_slim <- cbind(cards_slim, BlackMana)
-cards_slim <- cbind(cards_slim, BlueMana)
-cards_slim <- cbind(cards_slim, WhiteMana)
-cards_slim <- cbind(cards_slim, RedMana)
-cards_slim <- cbind(cards_slim, ColourlessMana)
-cards_slim <- cbind(cards_slim, ManaDiscrep)
-cards_slim <- cbind(cards_slim, GreenBlackMana)
-cards_slim <- cbind(cards_slim, GreenBlueMana)
-cards_slim <- cbind(cards_slim, GreenWhiteMana)
-cards_slim <- cbind(cards_slim, GreenRedMana)
-cards_slim <- cbind(cards_slim, BlackBlueMana)
-cards_slim <- cbind(cards_slim, BlackWhiteMana)
-cards_slim <- cbind(cards_slim, BlackRedMana)
-cards_slim <- cbind(cards_slim, BlueWhiteMana)
-cards_slim <- cbind(cards_slim, BlueRedMana)
-cards_slim <- cbind(cards_slim, WhiteRedMana)
 
 Master_Data <- merge(MasterFrame, cards_slim, by.x = 'card_name', by.y = 'name', all.x = TRUE)
 
 Master_Data_Landless <- Master_Data %>%
   filter(types != "Land") %>%
   arrange(manaValue)
+
+
+
+
+
 
 
 ## Filter for Deck ----
