@@ -113,7 +113,7 @@ Master_Data %>%
 
 
 Master_Data %>%
-  filter(commander_deck == "Lorescale") %>%
+  filter(commander_deck == "Lorescale Coatl") %>%
   select(card_name)
 
 
@@ -242,3 +242,8 @@ Dina_upgrade %>%
   filter(!Dina_upgrade$card_name %in% Dina$card_name)
 
 
+Master_Data %>%
+         filter(types != "Land")%>%
+         select(commander_deck, edhrecSaltiness)%>%
+         group_by(commander_deck) %>%
+         summarise(SaltScore = mean(edhrecSaltiness, na.rm = TRUE))
