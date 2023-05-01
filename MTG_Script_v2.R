@@ -37,9 +37,6 @@ Dina_upgrade$commander_deck <-c("Dina_upgrade")
 MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade)
 
 
-MasterFrame %>% filter(commander == "Y") %>%
-  select(card_name)
-
 #colourGuilds <- c()
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
@@ -134,7 +131,12 @@ Master_Data %>%
 Master_Data %>%
   count (commander_deck)
 
-
+Master_Data %>%
+  select(types) %>%
+  group_by(types) %>%
+  filter(types == "Creature" | types == "Artifact,Creature") %>%
+  count(types)
+  
 
 
 #Names of Decks
@@ -187,6 +189,7 @@ ggplot(Master_Data, aes(x = types, fill=types)) +
   geom_bar() +
   facet_wrap(~ commander_deck) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
 
 
 
