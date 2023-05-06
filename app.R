@@ -8,7 +8,8 @@ ui<- fluidPage(
   
   selectInput(inputId="select", label = h3("Select Deck"), 
               choices = MasterFrame %>% filter(commander == "Y") %>%
-                select(commander_deck), 
+                select(commander_deck) %>%
+                arrange(commander_deck), 
               selected = 1),
   
   hr(),
@@ -45,6 +46,8 @@ ui<- fluidPage(
   
   column(width = 5,
          
+  plotOutput("ManaDistrib"),
+         
   plotOutput("Curve") ,
   
   plotOutput("CardTypeDevision"),
@@ -71,8 +74,12 @@ server <- function(input, output) {
       filter(commander =="Y") %>%
       group_by(card_name,manaCost)%>%
       count(card_name) %>%
-      select(card_name, manaCost, n)
-  })
+      select(n, card_name, manaCost)
+  },
+  options = list(
+    autoWidth = TRUE,
+    columnDefs = list(list(width = '20px', targets = c(0)))
+  ))
   
   output$DeckCreatures <- renderDataTable({
     Master_Data %>%
@@ -82,9 +89,12 @@ server <- function(input, output) {
       select(card_name,manaCost,manaValue) %>%
       group_by(card_name, manaCost) %>%
       count(card_name)%>%
-      select(card_name, manaCost, n)# %>%
-#      arrange(n)
-      }) 
+      select(n, card_name, manaCost)
+      },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '20px', targets = c(0)))
+    )) 
   
   output$Sorcery <- renderDataTable({
     Master_Data %>%
@@ -93,7 +103,13 @@ server <- function(input, output) {
       select(card_name, manaCost) %>%
       arrange(card_name)%>%
       group_by(card_name, manaCost) %>%
-      count(card_name)})
+      count(card_name)%>%
+      select(n, card_name, manaCost)
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '20px', targets = c(0)))
+    ))
   
   output$Instant <- renderDataTable({
     Master_Data %>%
@@ -102,7 +118,13 @@ server <- function(input, output) {
       select(card_name, manaCost) %>%
       arrange(card_name)%>%
       group_by(card_name, manaCost) %>%
-      count(card_name)})
+      count(card_name)%>%
+      select(n, card_name, manaCost)
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '20px', targets = c(0)))
+    ))
   
   output$Artifact <- renderDataTable({
     Master_Data %>%
@@ -111,7 +133,13 @@ server <- function(input, output) {
       select(card_name, manaCost) %>%
       arrange(card_name)%>%
       group_by(card_name, manaCost) %>%
-      count(card_name)})
+      count(card_name)%>%
+      select(n, card_name, manaCost)
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '20px', targets = c(0)))
+    ))
   
   output$Enchantment <- renderDataTable({
     Master_Data %>%
@@ -120,7 +148,13 @@ server <- function(input, output) {
       select(card_name, manaCost) %>%
       arrange(card_name)%>%
       group_by(card_name, manaCost) %>%
-      count(card_name)})
+      count(card_name)%>%
+      select(n, card_name, manaCost)
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '20px', targets = c(0)))
+    ))
   
   output$Planeswalker <- renderDataTable({
     Master_Data %>%
@@ -129,7 +163,13 @@ server <- function(input, output) {
       select(card_name, manaCost) %>%
       arrange(card_name)%>%
       group_by(card_name, manaCost) %>%
-      count(card_name)})
+      count(card_name)%>%
+      select(n, card_name, manaCost)
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '20px', targets = c(0)))
+    ))
   
   output$Land <- renderDataTable({
     Master_Data %>%
@@ -138,7 +178,39 @@ server <- function(input, output) {
       select(card_name, manaCost) %>%
       arrange(card_name)%>%
       group_by(card_name, manaCost) %>%
-      count(card_name)})
+      count(card_name)%>%
+      select(n, card_name, manaCost)
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '20px', targets = c(0)))
+    ))
+  
+  
+  output$ManaDistrib <- renderPlot({
+    ggplot( data.frame( ManaColour = c("Green", "Black", "Blue", "White", "Red","Colourless"),
+                        Amount = c(sum(Master_Data$GreenMana[Master_Data$commander_deck==input$select]/sum(Master_Data$manaValue[Master_Data$commander_deck==input$select]), na.rm = TRUE),
+                                   sum(Master_Data$BlackMana[Master_Data$commander_deck==input$select]/sum(Master_Data$manaValue[Master_Data$commander_deck==input$select]), na.rm = TRUE),
+                                   sum(Master_Data$BlueMana[Master_Data$commander_deck==input$select]/sum(Master_Data$manaValue[Master_Data$commander_deck==input$select]), na.rm = TRUE),
+                                   sum(Master_Data$WhiteMana[Master_Data$commander_deck==input$select]/sum(Master_Data$manaValue[Master_Data$commander_deck==input$select]), na.rm = TRUE),
+                                   sum(Master_Data$RedMana[Master_Data$commander_deck==input$select]/sum(Master_Data$manaValue[Master_Data$commander_deck==input$select]), na.rm = TRUE),
+                                   sum(Master_Data$ColourlessMana[Master_Data$commander_deck==input$select]/sum(Master_Data$manaValue[Master_Data$commander_deck==input$select]), na.rm = TRUE)
+                        )),
+            
+            aes(x="", y= Amount, fill = ManaColour)) +
+      geom_bar(stat="identity", width=1) +
+      coord_polar("y", start=0) + 
+      geom_text(aes(label = paste0(round(Amount*100), "%")), position = position_stack(vjust = 0.5)) +
+      scale_fill_manual(values=c("#333333", "#2F48AA", "#999999", "#55AA55", "#F21919", "#DDDDDD")) +
+      labs(x = NULL, y = NULL, fill = NULL, title = "Mana Division") +
+      theme_classic() + theme(axis.line = element_blank(),
+                              axis.text = element_blank(),
+                              axis.ticks = element_blank(),
+                              plot.title = element_text(hjust = 0.5, color = "#666666"))
+    
+  })
+  
+  
   
   
   output$Curve <- renderPlot({

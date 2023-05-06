@@ -53,10 +53,11 @@ cards_slim <- cards %>%
          leadershipSkills, life, loyalty, manaCost, manaValue, mcmId,
          mcmMetaId,
          name, originalPrintings, originalReleaseDate, originalText, originalType, otherFaceIds, power,
-         printings, rarity,
+         printings, rarity, side,
          subtypes, supertypes,
          text, toughness, type, types,
          watermark) %>%
+  filter(side != "b") %>%
   arrange(desc(id)) %>%
   distinct(name, .keep_all = TRUE)
 
@@ -199,6 +200,32 @@ ggplot( Master_Data %>%
   aes(manaValue, n, fill = types)) +
   geom_bar(stat="identity") +
   facet_wrap(~ commander_deck)
+
+
+ggplot( data.frame( ManaColour = c("Green", "Black", "Blue", "White", "Red","Colourless"),
+                    Amount = c(sum(Master_Data$GreenMana[Master_Data$commander_deck=="Dina, Soul Steeper"]/sum(Master_Data$manaValue[Master_Data$commander_deck=="Dina, Soul Steeper"]), na.rm = TRUE),
+                               sum(Master_Data$BlackMana[Master_Data$commander_deck=="Dina, Soul Steeper"]/sum(Master_Data$manaValue[Master_Data$commander_deck=="Dina, Soul Steeper"]), na.rm = TRUE),
+                               sum(Master_Data$BlueMana[Master_Data$commander_deck=="Dina, Soul Steeper"]/sum(Master_Data$manaValue[Master_Data$commander_deck=="Dina, Soul Steeper"]), na.rm = TRUE),
+                               sum(Master_Data$WhiteMana[Master_Data$commander_deck=="Dina, Soul Steeper"]/sum(Master_Data$manaValue[Master_Data$commander_deck=="Dina, Soul Steeper"]), na.rm = TRUE),
+                               sum(Master_Data$RedMana[Master_Data$commander_deck=="Dina, Soul Steeper"]/sum(Master_Data$manaValue[Master_Data$commander_deck=="Dina, Soul Steeper"]), na.rm = TRUE),
+                               sum(Master_Data$ColourlessMana[Master_Data$commander_deck=="Dina, Soul Steeper"]/sum(Master_Data$manaValue[Master_Data$commander_deck=="Dina, Soul Steeper"]), na.rm = TRUE)
+                               )),
+        
+        aes(x="", y= Amount, fill = ManaColour)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) + 
+  geom_text(aes(label = paste0(round(Amount*100), "%")), position = position_stack(vjust = 0.5)) +
+  scale_fill_manual(values=c("#333333", "#2F48AA", "#999999", "#55AA55", "#F21919", "#DDDDDD")) +
+  labs(x = NULL, y = NULL, fill = NULL, title = "Mana Division") +
+  theme_classic() + theme(axis.line = element_blank(),
+                          axis.text = element_blank(),
+                          axis.ticks = element_blank(),
+                          plot.title = element_text(hjust = 0.5, color = "#666666"))
+
+
+
+
+
 
 
 ## Check cards that approximately match wordstring ----
