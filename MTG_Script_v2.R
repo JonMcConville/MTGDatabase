@@ -79,6 +79,20 @@ cards_slim <- cbind(cards_slim, BlackRedMana = str_count(cards_slim$manaCost,"\\
 cards_slim <- cbind(cards_slim, BlueWhiteMana = str_count(cards_slim$manaCost,"\\{R/W\\}") + str_count(cards_slim$manaCost,"\\{W/U\\}"))
 cards_slim <- cbind(cards_slim, BlueRedMana = str_count(cards_slim$manaCost,"\\{U/R\\}") + str_count(cards_slim$manaCost,"\\{R/U\\}"))
 cards_slim <- cbind(cards_slim, WhiteRedMana = str_count(cards_slim$manaCost,"\\{W/R\\}") + str_count(cards_slim$manaCost,"\\{R/W\\}"))
+cards_slim <- cbind(cards_slim, GreenPhyrexian = str_count(cards_slim$manaCost,"\\{G/P\\}") + str_count(cards_slim$manaCost,"\\{P/G\\}"))
+cards_slim <- cbind(cards_slim, BlackPhyrexian = str_count(cards_slim$manaCost,"\\{B/P\\}") + str_count(cards_slim$manaCost,"\\{P/B\\}"))
+cards_slim <- cbind(cards_slim, BluePhyrexian = str_count(cards_slim$manaCost,"\\{U/P\\}") + str_count(cards_slim$manaCost,"\\{P/U\\}"))
+cards_slim <- cbind(cards_slim, WhitePhyrexian = str_count(cards_slim$manaCost,"\\{W/P\\}") + str_count(cards_slim$manaCost,"\\{P/W\\}"))
+cards_slim <- cbind(cards_slim, RedPhyrexian = str_count(cards_slim$manaCost,"\\{R/P\\}") + str_count(cards_slim$manaCost,"\\{P/R\\}"))
+cards_slim <- cbind(cards_slim, GreenWhitePhyrexian = str_count(cards_slim$manaCost,"\\{G/W/P\\}") + str_count(cards_slim$manaCost,"\\{W/G/P\\}"))
+cards_slim <- cbind(cards_slim, GreenRedPhyrexian = str_count(cards_slim$manaCost,"\\{G/R/P\\}") + str_count(cards_slim$manaCost,"\\{R/G/P\\}"))
+cards_slim <- cbind(cards_slim, WhiteRedPhyrexian = str_count(cards_slim$manaCost,"\\{W/R/P\\}") + str_count(cards_slim$manaCost,"\\{R/W/P\\}"))
+cards_slim <- cbind(cards_slim, GreenTwo = str_count(cards_slim$manaCost,"\\{G/2\\}") + str_count(cards_slim$manaCost,"\\{2/G\\}"))
+cards_slim <- cbind(cards_slim, BlackTwo = str_count(cards_slim$manaCost,"\\{B/2\\}") + str_count(cards_slim$manaCost,"\\{2/B\\}"))
+cards_slim <- cbind(cards_slim, BlueTwo = str_count(cards_slim$manaCost,"\\{U/2\\}") + str_count(cards_slim$manaCost,"\\{2/U\\}"))
+cards_slim <- cbind(cards_slim, WhiteTwo = str_count(cards_slim$manaCost,"\\{W/2\\}") + str_count(cards_slim$manaCost,"\\{2/W\\}"))
+cards_slim <- cbind(cards_slim, RedTwo = str_count(cards_slim$manaCost,"\\{R/2\\}") + str_count(cards_slim$manaCost,"\\{2/R\\}"))
+
 
 cards_slim <- cbind(cards_slim, ColourlessMana = str_count(cards_slim$manaCost,"\\{1\\}") + str_count(cards_slim$manaCost,"\\{2\\}")*2 + str_count(cards_slim$manaCost,"\\{3\\}")*3 + str_count(cards_slim$manaCost,"\\{4\\}")*4 + 
   str_count(cards_slim$manaCost,"\\{5\\}")*5 + str_count(cards_slim$manaCost,"\\{6\\}")*6 + str_count(cards_slim$manaCost,"\\{7\\}")*7 + str_count(cards_slim$manaCost,"\\{8\\}")*8 + 
