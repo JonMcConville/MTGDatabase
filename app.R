@@ -253,7 +253,8 @@ server <- function(input, output) {
              group_by(commander_deck) %>%
              summarise(SaltScore = mean(edhrecSaltiness, na.rm = TRUE)),
            aes(x=commander_deck, y=SaltScore)) +
-      geom_bar(stat="identity")
+      geom_bar(stat="identity") +
+      coord_flip()
            
   })
     
