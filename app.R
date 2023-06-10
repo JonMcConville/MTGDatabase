@@ -1,9 +1,14 @@
 library(shiny)
 library(dplyr)
+library(shinydashboard)
 
 ui<- fluidPage(
   
   titlePanel("Jon's Deck Display"),
+  
+  
+  tabsetPanel(
+    tabPanel(title = "Decks",
   
   
   selectInput(inputId="select", label = h3("Select Deck"), 
@@ -50,11 +55,19 @@ ui<- fluidPage(
          
   plotOutput("Curve") ,
   
-  plotOutput("CardTypeDevision"),
+  plotOutput("CardTypeDevision")
   
-  plotOutput("DeckAverage"),
+
   
-  plotOutput("SaltScore")
+  ))),
+  tabPanel(title = "Overview", 
+           
+           plotOutput("DeckAverage"),
+           
+           plotOutput("SaltScore")
+           
+            
+           )
   
   
          
@@ -62,7 +75,7 @@ ui<- fluidPage(
          
          
          ))
-  )
+  
 
 
 server <- function(input, output) {
