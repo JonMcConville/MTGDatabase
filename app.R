@@ -6,69 +6,85 @@ ui<- dashboardPage(
   
   dashboardHeader(title = "Jon's Deck Display"),
   
+  dashboardSidebar(),
   
-  selectInput(inputId="select", label = h3("Select Deck"), 
-              choices = MasterFrame %>% filter(commander == "Y") %>%
-                select(commander_deck) %>%
-                arrange(commander_deck), 
-              selected = 1),
+  dashboardBody(
   
-  hr(),
+  
+  tabsetPanel(
+    tabPanel(title = "Decks",
+             
+             
+             selectInput(inputId="select", label = h3("Select Deck"), 
+                         choices = MasterFrame %>% filter(commander == "Y") %>%
+                           select(commander_deck) %>%
+                           arrange(commander_deck), 
+                         selected = 1),
+             
+             hr(),
+             
+             
+             fluidRow(
+               column(width = 7,
+                      
+                      titlePanel(title = "Commander"),
+                      dataTableOutput("CommanderCreature"),
+                      
+                      
+                      titlePanel(title = "Creatures"),
+                      dataTableOutput("DeckCreatures"),
+                      
+                      titlePanel(title = "Sorceries"),
+                      dataTableOutput("Sorcery"),
+                      
+                      titlePanel(title = "Instants"),
+                      dataTableOutput("Instant"),
+                      
+                      titlePanel(title = "Artifacts"),
+                      dataTableOutput("Artifact"),
+                      
+                      titlePanel(title = "Enchantments"),
+                      dataTableOutput("Enchantment"),
+                      
+                      titlePanel(title = "Planeswalkers"),
+                      dataTableOutput("Planeswalker"),
+                      
+                      titlePanel(title = "Lands"),
+                      dataTableOutput("Land")
+               ),
+               
+               column(width = 5,
+                      
+                      plotOutput("ManaDistrib"),
+                      
+                      plotOutput("Curve") ,
+                      
+                      plotOutput("CardTypeDevision")
+                      
+                      
+                      
+               ))),
+    tabPanel(title = "Overview", 
+             
+             plotOutput("DeckAverage"),
+             
+             plotOutput("SaltScore")
+             
+             
+    )
+    
+    
+    
+    
+    
+    
+  )))
 
-
-  fluidRow(
-    column(width = 7,
-  
-  titlePanel(title = "Commander"),
-  dataTableOutput("CommanderCreature"),
-           
-           
-  titlePanel(title = "Creatures"),
-  dataTableOutput("DeckCreatures"),
-  
-  titlePanel(title = "Sorceries"),
-  dataTableOutput("Sorcery"),
-  
-  titlePanel(title = "Instants"),
-  dataTableOutput("Instant"),
-  
-  titlePanel(title = "Artifacts"),
-  dataTableOutput("Artifact"),
-  
-  titlePanel(title = "Enchantments"),
-  dataTableOutput("Enchantment"),
-  
-  titlePanel(title = "Planeswalkers"),
-  dataTableOutput("Planeswalker"),
-  
-  titlePanel(title = "Lands"),
-  dataTableOutput("Land")
-          ),
-  
-  column(width = 5,
-         
-  plotOutput("ManaDistrib"),
-         
-  plotOutput("Curve") ,
-  
-  plotOutput("CardTypeDevision"),
-  
-  plotOutput("DeckAverage"),
-  
-  plotOutput("SaltScore")
-  
-  
-         
-         
-         
-         
-         ))
-  )
 
 
 server <- function(input, output) {
   
-
+  
   output$CommanderCreature <- renderDataTable ({
     Master_Data %>%
       filter(commander_deck == input$select) %>%
@@ -91,11 +107,11 @@ server <- function(input, output) {
       group_by(card_name, manaCost) %>%
       count(card_name)%>%
       select(n, card_name, manaCost)
-      },
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(width = '20px', targets = c(0)))
-    )) 
+  },
+  options = list(
+    autoWidth = TRUE,
+    columnDefs = list(list(width = '20px', targets = c(0)))
+  )) 
   
   output$Sorcery <- renderDataTable({
     Master_Data %>%
@@ -106,11 +122,11 @@ server <- function(input, output) {
       group_by(card_name, manaCost) %>%
       count(card_name)%>%
       select(n, card_name, manaCost)
-    },
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(width = '20px', targets = c(0)))
-    ))
+  },
+  options = list(
+    autoWidth = TRUE,
+    columnDefs = list(list(width = '20px', targets = c(0)))
+  ))
   
   output$Instant <- renderDataTable({
     Master_Data %>%
@@ -121,11 +137,11 @@ server <- function(input, output) {
       group_by(card_name, manaCost) %>%
       count(card_name)%>%
       select(n, card_name, manaCost)
-    },
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(width = '20px', targets = c(0)))
-    ))
+  },
+  options = list(
+    autoWidth = TRUE,
+    columnDefs = list(list(width = '20px', targets = c(0)))
+  ))
   
   output$Artifact <- renderDataTable({
     Master_Data %>%
@@ -136,11 +152,11 @@ server <- function(input, output) {
       group_by(card_name, manaCost) %>%
       count(card_name)%>%
       select(n, card_name, manaCost)
-    },
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(width = '20px', targets = c(0)))
-    ))
+  },
+  options = list(
+    autoWidth = TRUE,
+    columnDefs = list(list(width = '20px', targets = c(0)))
+  ))
   
   output$Enchantment <- renderDataTable({
     Master_Data %>%
@@ -151,11 +167,11 @@ server <- function(input, output) {
       group_by(card_name, manaCost) %>%
       count(card_name)%>%
       select(n, card_name, manaCost)
-    },
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(width = '20px', targets = c(0)))
-    ))
+  },
+  options = list(
+    autoWidth = TRUE,
+    columnDefs = list(list(width = '20px', targets = c(0)))
+  ))
   
   output$Planeswalker <- renderDataTable({
     Master_Data %>%
@@ -166,11 +182,11 @@ server <- function(input, output) {
       group_by(card_name, manaCost) %>%
       count(card_name)%>%
       select(n, card_name, manaCost)
-    },
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(width = '20px', targets = c(0)))
-    ))
+  },
+  options = list(
+    autoWidth = TRUE,
+    columnDefs = list(list(width = '20px', targets = c(0)))
+  ))
   
   output$Land <- renderDataTable({
     Master_Data %>%
@@ -181,11 +197,11 @@ server <- function(input, output) {
       group_by(card_name, manaCost) %>%
       count(card_name)%>%
       select(n, card_name, manaCost)
-    },
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(width = '20px', targets = c(0)))
-    ))
+  },
+  options = list(
+    autoWidth = TRUE,
+    columnDefs = list(list(width = '20px', targets = c(0)))
+  ))
   
   
   output$ManaDistrib <- renderPlot({
@@ -202,7 +218,7 @@ server <- function(input, output) {
       geom_bar(stat="identity", width=1) +
       coord_polar("y", start=0) + 
       geom_text(aes(label = paste0(round(Amount*100), "%")), position = position_stack(vjust = 0.5)) +
-      scale_fill_manual(values=c("#333333", "#2F48AA", "#999999", "#55AA55", "#F21919", "#DDDDDD")) +
+      scale_fill_manual(values=c("#333333", "#1468AB", "#999999", "#00733E", "#D33242", "#F8E7B9")) +
       labs(x = NULL, y = NULL, fill = NULL, title = "Mana Division") +
       theme_classic() + theme(axis.line = element_blank(),
                               axis.text = element_blank(),
@@ -222,10 +238,10 @@ server <- function(input, output) {
             aes(manaValue, n, fill = types)) +
       geom_bar(stat="identity") +
       theme(legend.position = c(0.9, 0.8))
-  
+    
   })
-    
-    
+  
+  
   output$DeckAverage <- renderPlot({
     ggplot(Master_Data_Landless,aes(x = commander_deck, y = manaValue, fill = commander_deck)) +
       geom_boxplot() +
@@ -236,7 +252,7 @@ server <- function(input, output) {
       theme(legend.position = "none")
     
   })
-
+  
   
   output$CardTypeDevision <- renderPlot({
     ggplot(Master_Data %>%
@@ -249,16 +265,17 @@ server <- function(input, output) {
   
   output$SaltScore <- renderPlot({
     ggplot(Master_Data %>%
-#             filter(types != "Land")%>%
+             #             filter(types != "Land")%>%
              select(commander_deck, edhrecSaltiness)%>%
              group_by(commander_deck) %>%
              summarise(SaltScore = mean(edhrecSaltiness, na.rm = TRUE)),
-           aes(x=commander_deck, y=SaltScore)) +
+           aes(x=commander_deck, y=SaltScore, fill = commander_deck)) +
       geom_bar(stat="identity") +
-      coord_flip()
-           
-  })
+      coord_flip() +
+      guides(fill="none")
     
+  })
+  
   
   
 }
