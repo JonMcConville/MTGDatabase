@@ -1,9 +1,10 @@
 library(shiny)
 library(dplyr)
+library(shinydashboard)
 
-ui<- fluidPage(
+ui<- dashboardPage(
   
-  titlePanel("Jon's Deck Display"),
+  dashboardHeader(title = "Jon's Deck Display"),
   
   
   selectInput(inputId="select", label = h3("Select Deck"), 
