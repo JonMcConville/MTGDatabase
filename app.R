@@ -7,9 +7,16 @@ ui<- dashboardPage(
   
   dashboardHeader(title = "Jon's Deck Display"),
   
-  dashboardSidebar(),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem(text = "Deck Information", tabName = "DeckBoard"),
+      menuItem(text = "Card Lookup", tabName = "CardBoard")
+    )
+  ),
   
   dashboardBody(
+    tabItems(
+      tabItem(tabName = "DeckBoard",
 
   
   
@@ -81,7 +88,11 @@ ui<- dashboardPage(
     
     
     
-  )))
+  ))),
+  
+  tabItem(tabName = "CardBoard")
+  
+  ))
 
 
   
