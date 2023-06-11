@@ -24,6 +24,7 @@ Liesa <-read.csv("Decks/Liesa.csv")
 Lorescale <-read.csv("Decks/Lorescale.csv")
 Dina_upgrade <-read.csv("Decks/Dina_Upgrade.csv")
 DinaV2 <-read.csv("Decks/Dina_v2.csv")
+Rats <- read.csv("Decks/Rats.csv")
 
 
 Ghired$commander_deck <-c("Ghired, Conclave Exile")
@@ -36,8 +37,9 @@ Liesa$commander_deck <-c("Liesa, Shroud of Dusk")
 Lorescale$commander_deck <-c("Lorescale Coatl")
 Dina_upgrade$commander_deck <-c("Dina_upgrade")
 DinaV2$commander_deck <-c("DinaV2")
+Rats$commander_deck <-c("Rats")
 
-MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade, DinaV2)
+MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade, DinaV2, Rats)
 
 
 #colourGuilds <- c()
@@ -122,7 +124,7 @@ Master_Data_Landless <- Master_Data %>%
 
 
 Master_Data %>%
-  filter(commander_deck == "DinaV2") %>%
+  filter(commander_deck == "Rats") %>%
 #  filter(types!= "Land") %>%
   select(card_name, manaCost, types, manaValue) %>%
   arrange(types, card_name) %>%
@@ -248,7 +250,7 @@ ggplot( data.frame( ManaColour = c("Green", "Black", "Blue", "White", "Red","Col
 
 ## Check cards that approximately match wordstring ----
 
-agrep("Darkbore Pathway", cards_slim$name, max.distance = .25, value = TRUE)
+agrep("Okiba Reckoner Raid", cards_slim$name, max.distance = .25, value = TRUE)
 
 everything_pivot <- qhpvt(cards_slim,"colorIdentity","types","n()")
 
