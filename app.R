@@ -2,6 +2,7 @@ library(shiny)
 library(dplyr)
 library(shinydashboard)
 
+
 ui<- dashboardPage(
   
   dashboardHeader(title = "Jon's Deck Display"),
@@ -9,10 +10,13 @@ ui<- dashboardPage(
   dashboardSidebar(),
   
   dashboardBody(
+    =======
+
   
   
   tabsetPanel(
     tabPanel(title = "Decks",
+
              
              
              selectInput(inputId="select", label = h3("Select Deck"), 
@@ -80,6 +84,8 @@ ui<- dashboardPage(
     
   )))
 
+
+  
 
 
 server <- function(input, output) {
