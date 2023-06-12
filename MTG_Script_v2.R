@@ -24,7 +24,7 @@ Liesa <-read.csv("Decks/Liesa.csv")
 Lorescale <-read.csv("Decks/Lorescale.csv")
 Dina_upgrade <-read.csv("Decks/Dina_Upgrade.csv")
 DinaV2 <-read.csv("Decks/Dina_v2.csv")
-Rats <-read.csv("Rats.csv")
+Rats <-read.csv("Decks/Rats.csv")
 
 
 Ghired$commander_deck <-c("Ghired, Conclave Exile")
