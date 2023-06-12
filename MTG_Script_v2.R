@@ -24,6 +24,7 @@ Liesa <-read.csv("Decks/Liesa.csv")
 Lorescale <-read.csv("Decks/Lorescale.csv")
 Dina_upgrade <-read.csv("Decks/Dina_Upgrade.csv")
 DinaV2 <-read.csv("Decks/Dina_v2.csv")
+Rats <-read.csv("Rats.csv")
 
 
 Ghired$commander_deck <-c("Ghired, Conclave Exile")
@@ -36,8 +37,9 @@ Liesa$commander_deck <-c("Liesa, Shroud of Dusk")
 Lorescale$commander_deck <-c("Lorescale Coatl")
 Dina_upgrade$commander_deck <-c("Dina_upgrade")
 DinaV2$commander_deck <-c("DinaV2")
+Rats$commander_deck <-c("Rats")
 
-MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade, DinaV2)
+MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade, DinaV2, Rats)
 
 
 #colourGuilds <- c()
