@@ -11,6 +11,25 @@ library(pivottabler)
 library(shiny)
 library(shinydashboard)
 
+#Updating csv files from online database ----
+
+cardsdl <- read.csv("https://mtgjson.com/api/v5/csv/cards.csv")
+setsdl <- read.csv("https://mtgjson.com/api/v5/csv/sets.csv")
+tokensdl <- read.csv("https://mtgjson.com/api/v5/csv/tokens.csv")
+cardRulingsdl <- read.csv("https://mtgjson.com/api/v5/csv/cardRulings.csv")
+cardPricesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardPrices.csv")
+cardLegalitiesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardLegalities.csv")
+metadl <- read.csv("https://mtgjson.com/api/v5/csv/meta.csv")
+
+write.csv(cardsdl, "DataFiles/cards.csv", row.names=FALSE)
+write.csv(setsdl, "DataFiles/sets.csv", row.names=FALSE)
+write.csv(tokensdl, "DataFiles/tokens.csv", row.names=FALSE)
+write.csv(cardRulingsdl, "DataFiles/cardRulings.csv", row.names=FALSE)
+write.csv(cardPricesdl, "DataFiles/cardPrices.csv", row.names=FALSE)
+write.csv(cardLegalitiesdl, "DataFiles/cardsLegalities.csv", row.names=FALSE)
+write.csv(metadl, "Datafiles/meta.csv", row.names=FALSE)
+
+
 ##Reading in Data ----
 
 cards <- read.csv("cards.csv")
@@ -50,7 +69,7 @@ MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lores
 
 cards_slim <- cards %>%
   
-  select(index, id, colorIdentity, colorIndicator, colors,
+  select(id, colorIdentity, colorIndicator, colors,
          convertedManaCost, edhrecRank, edhrecSaltiness, faceConvertedManaCost, faceFlavorName, faceManaValue, faceName,
          hand, hasAlternativeDeckLimit, hasContentWarning,
          isAlternative,
