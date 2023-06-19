@@ -313,3 +313,13 @@ Master_Data %>%
          select(commander_deck, edhrecSaltiness)%>%
          group_by(commander_deck) %>%
          summarise(SaltScore = mean(edhrecSaltiness, na.rm = TRUE))
+
+
+Master_Data %>%
+#  filter(commander_deck == input$select) %>%
+#  filter(commander =="Y") %>%
+  group_by(card_name,manaCost, uuid)%>%
+  count(card_name) %>%
+  select(n, card_name, manaCost, uuid)
+
+colnames(cards_slim)

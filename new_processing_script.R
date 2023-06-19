@@ -1,6 +1,9 @@
+# Load data files ----
+
 cards <- read.csv("DataFiles/cards.csv")
 sets <- read.csv("DataFiles/sets.csv")
-sets$releaseDate <- ymd(sets$releaseDate)
+cardPrices <- read.csv("DataFiles/cardPrices.csv")
+
 
 
 Ghired <-read.csv("Decks/Ghired.csv")
@@ -15,6 +18,11 @@ Dina_upgrade <-read.csv("Decks/Dina_Upgrade.csv")
 DinaV2 <-read.csv("Decks/Dina_v2.csv")
 Rats <-read.csv("Decks/Rats.csv")
 
+#Data Cleanse and add markers ----
+
+sets$releaseDate <- ymd(sets$releaseDate)
+colnames(sets)[colnames(sets) == 'name'] <- 'setName'
+
 Ghired$commander_deck <-c("Ghired, Conclave Exile")
 Dina$commander_deck <-c("Dina, Soul Steeper")
 Lathril$commander_deck <-c("Lathril, Blade of the Elves")
@@ -26,9 +34,6 @@ Lorescale$commander_deck <-c("Lorescale Coatl")
 Dina_upgrade$commander_deck <-c("Dina_upgrade")
 DinaV2$commander_deck <-c("DinaV2")
 Rats$commander_deck <-c("Rats")
-
-MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade, DinaV2, Rats)
-
 
 cards <- cbind(cards, GreenMana = str_count(cards$manaCost,"\\{G\\}"))
 cards <- cbind(cards, BlackMana = str_count(cards$manaCost,"\\{B\\}"))
@@ -68,15 +73,38 @@ cards <- cbind(cards, ColourlessMana = str_count(cards$manaCost,"\\{1\\}") + str
 cards <- cbind(cards, ManaDiscrep = cards$faceManaValue - cards$GreenMana - cards$BlueMana - cards$BlackMana - cards$WhiteMana - cards$RedMana - cards$ColourlessMana - cards$GreenBlackMana - cards$GreenBlueMana - cards$GreenWhiteMana - cards$GreenRedMana - cards$BlackBlueMana -
                       cards$BlackWhiteMana - cards$BlackRedMana - cards$BlueWhiteMana - cards$BlueRedMana - cards$WhiteRedMana)
 
+#Merge Datasets ----
+
+MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade, DinaV2, Rats)
+
 ConsolidatedData <- merge(cards, sets, by.x = 'setCode', by.y = 'code', all.x = TRUE)
 
 cards_slim <- ConsolidatedData %>%
   filter(side != "b") %>%
   arrange(desc(releaseDate)) %>%
-  distinct(name.x, .keep_all = TRUE)
+  distinct(name, .keep_all = TRUE)
 
 
-Master_Data <- merge(MasterFrame, cards_slim, by.x = 'card_name', by.y = 'name.x', all.x = TRUE)
+Master_Data <- merge(MasterFrame, cards_slim, by.x = 'card_name', by.y = 'name', all.x = TRUE)
+
+Master_Data_Landless <- Master_Data %>%
+  filter(types != "Land") %>%
+  arrange(manaValue)
+
+Master_Data_Prices <- merge(Master_Data, cardPrices [filter(priceProvider == "tcgplayer")], by.x = 'uuid', by.y = 'uuid', all.x = TRUE)
+
+Price_Check <- Master_Data_Prices %>%
+  select(commander_deck, name, price) %>%
+  filter(commander_deck == "DinaV2")
+  group_by(commander_deck) %>%
+  summarise(sum(price, na.rm = TRUE))
+
+  
+cardPrices %>% pivot_wider(names_from = c(priceProvider), values_from = price)  
 
 
-
+cardPrices %>%
+  select(priceProvider)%>%
+  distinct(priceProvider) %>%
+  select(uuid)
+  

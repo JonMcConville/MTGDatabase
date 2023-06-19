@@ -18,113 +18,134 @@ ui<- dashboardPage(
   dashboardBody(
     tabItems(
       tabItem(tabName = "DeckBoard",
-
-  
-  
-  tabsetPanel(
-    tabPanel(title = "Decks",
-
-             
-             
-             selectInput(inputId="select", label = h3("Select Deck"), 
-                         choices = MasterFrame %>% filter(commander == "Y") %>%
-                           select(commander_deck) %>%
-                           arrange(commander_deck), 
-                         selected = 1),
-             
-             hr(),
-             
-             
-             fluidRow(
-               column(width = 7,
-                      
-                      titlePanel(title = "Commander"),
-                      dataTableOutput("CommanderCreature"),
-                      
-                      
-                      titlePanel(title = "Creatures"),
-                      dataTableOutput("DeckCreatures"),
-                      
-                      titlePanel(title = "Sorceries"),
-                      dataTableOutput("Sorcery"),
-                      
-                      titlePanel(title = "Instants"),
-                      dataTableOutput("Instant"),
-                      
-                      titlePanel(title = "Artifacts"),
-                      dataTableOutput("Artifact"),
-                      
-                      titlePanel(title = "Enchantments"),
-                      dataTableOutput("Enchantment"),
-                      
-                      titlePanel(title = "Planeswalkers"),
-                      dataTableOutput("Planeswalker"),
-                      
-                      titlePanel(title = "Lands"),
-                      dataTableOutput("Land")
-               ),
-               
-               column(width = 5,
-                      
-                      plotOutput("ManaDistrib"),
-                      
-                      plotOutput("Curve") ,
-                      
-                      plotOutput("CardTypeDevision")
-                      
-                      
-                      
-               ))),
-    tabPanel(title = "Overview", 
-             
-             plotOutput("DeckAverage"),
-             
-             plotOutput("SaltScore")
-             
-             
-    )
-    
-    
-    
-    
-    
-    
-  )),
-  
-  tabItem(tabName = "CardBoard"),
-  
-  tabItem(tabName = "OptionBoard",
-          
-          radioButtons("selectProvider", label = h3("Price Provider"),
-                       choices = list("Card Hoarder" = "cardhoarder", "TCG Player" = "tcgplayer", "Card Market (default)" = "cardmarket", "Card Kingdom" = "cardkingdom", "Card Sphere" = "cardsphere"), 
-                       selected = "cardmarket")
-          
-          )
-  
-  
+              
+              
+              
+              tabsetPanel(
+                tabPanel(title = "Decks",
+                         
+                         
+                         
+                         selectInput(inputId="select", label = h3("Select Deck"), 
+                                     choices = MasterFrame %>% filter(commander == "Y") %>%
+                                       select(commander_deck) %>%
+                                       arrange(commander_deck), 
+                                     selected = 1),
+                         
+                         hr(),
+                         
+                         
+                         fluidRow(
+                           column(width = 7,
+                                  
+                                  titlePanel(title = "Commander"),
+                                  dataTableOutput("CommanderCreature"),
+                                  
+                                  
+                                  titlePanel(title = "Creatures"),
+                                  dataTableOutput("DeckCreatures"),
+                                  
+                                  titlePanel(title = "Sorceries"),
+                                  dataTableOutput("Sorcery"),
+                                  
+                                  titlePanel(title = "Instants"),
+                                  dataTableOutput("Instant"),
+                                  
+                                  titlePanel(title = "Artifacts"),
+                                  dataTableOutput("Artifact"),
+                                  
+                                  titlePanel(title = "Enchantments"),
+                                  dataTableOutput("Enchantment"),
+                                  
+                                  titlePanel(title = "Planeswalkers"),
+                                  dataTableOutput("Planeswalker"),
+                                  
+                                  titlePanel(title = "Lands"),
+                                  dataTableOutput("Land")
+                           ),
+                           
+                           column(width = 5,
+                                  
+                                  plotOutput("ManaDistrib"),
+                                  
+                                  plotOutput("Curve") ,
+                                  
+                                  plotOutput("CardTypeDevision")
+                                  
+                                  
+                                  
+                           ))),
+                tabPanel(title = "Overview", 
+                         
+                         plotOutput("DeckAverage"),
+                         
+                         plotOutput("SaltScore")
+                         
+                         
+                )
+                
+                
+                
+                
+                
+                
+              )),
+      
+      tabItem(tabName = "CardBoard"),
+      
+      tabItem(tabName = "OptionBoard",
+              
+              radioButtons("selectProvider", label = h3("Price Provider"),
+                           choices = list("Card Hoarder" = "cardhoarder", "TCG Player" = "tcgplayer", "Card Market (default)" = "cardmarket", "Card Kingdom" = "cardkingdom", "Card Sphere" = "cardsphere"), 
+                           selected = "cardmarket")
+              
+      )
+      
+      
     )
   ))
 
 
-  
+
 
 
 server <- function(input, output) {
   
+#Filtering Data for tables ----  
+  
+  
+  output$Deck <-  renderDataTable ({ merge(
+    (Master_Data %>%
+       filter(commander_deck == input$select) %>%
+       group_by(card_name, commander, types, manaCost, uuid)%>%
+       count(card_name) %>%
+       select(n, card_name, commander, types, manaCost, uuid)),
+    
+    cardPrices %>%
+      filter(priceProvider == input$selectProvider) %>%
+      filter(cardFinish == "normal") %>%
+      filter(providerListing == "retail"),
+      by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+      select(n, card_name, manaCost, price)
+  
+  })
+    
+
+#Tables for Deck Page ----  
+    
   
   output$CommanderCreature <- renderDataTable ({ merge(
-    (Master_Data %>%
-      filter(commander_deck == input$select) %>%
-      filter(commander =="Y") %>%
-      group_by(card_name,manaCost, uuid)%>%
-      count(card_name) %>%
-      select(n, card_name, manaCost, uuid)), 
+    (output$Deck %>%
+       filter(commander =="Y") %>%
+       group_by(card_name,manaCost, uuid)%>%
+       count(card_name) %>%
+       select(n, card_name, manaCost, uuid)), 
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail")
-      , by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+    , by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
       select(n, card_name, manaCost, price)
   },
   options = list(
