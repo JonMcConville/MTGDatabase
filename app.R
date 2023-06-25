@@ -27,10 +27,11 @@ ui<- dashboardPage(
              
              
              selectInput(inputId="select", label = h3("Select Deck"), 
-                         choices = MasterFrame %>% filter(commander == "Y") %>%
+                         choices = c("Choose Deck ...",MasterFrame %>% filter(commander == "Y") %>%
                            select(commander_deck) %>%
-                           arrange(commander_deck), 
-                         selected = 1),
+                           arrange(commander_deck))#, 
+                         #selected = 1
+                         ),
              
              hr(),
              
@@ -75,12 +76,36 @@ ui<- dashboardPage(
                       
                       
                ))),
-    tabPanel(title = "Overview", 
+    tabPanel(title = "Overview",
              
-             plotOutput("DeckAverage"),
+             fluidRow(
+               column(width = 6,
+                      
+              titlePanel(title = "Deck Mana Averages"),
+              plotOutput("DeckAverage")),
              
-             plotOutput("SaltScore")
+             column( width = 6,
              
+              titlePanel(title = "Deck Salt"),
+              plotOutput("SaltScore"))
+             
+             ),
+             
+             fluidRow(
+               column(width = 6,
+            
+                      
+              titlePanel(title = "Deck Costs"),
+              plotOutput("deckCosts")),
+            
+            column(width = 6,
+                   
+                   
+                   )
+                      
+                      
+                      
+             )
              
     )
     
@@ -116,16 +141,16 @@ server <- function(input, output) {
     (Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(commander =="Y") %>%
-      group_by(card_name,manaCost, uuid)%>%
-      count(card_name) %>%
-      select(n, card_name, manaCost, uuid)), 
+      group_by(name,manaCost, uuid)%>%
+      count(name) %>%
+      select(n, name, manaCost, uuid)), 
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail")
       , by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(n, card_name, manaCost, price)
+      select(n, name, manaCost, price)
   },
   options = list(
     autoWidth = TRUE,
@@ -135,19 +160,19 @@ server <- function(input, output) {
   output$DeckCreatures <- renderDataTable({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
-      filter(card_name != input$select) %>%
-      filter(types == "Creature" | types =="Artifact,Creature" | types =="Enchantment,Creature" | types =="Land,Creature") %>%
-      select(card_name,manaCost,manaValue, uuid) %>%
-      group_by(card_name, manaCost, uuid) %>%
-      count(card_name)%>%
-      select(n, card_name, manaCost, uuid),
+      filter(name != input$select) %>%
+      filter(types == "Creature" | types =="Artifact, Creature" | types =="Enchantment, Creature" | types =="Land, Creature") %>%
+      select(name,manaCost,manaValue, uuid) %>%
+      group_by(name, manaCost, uuid) %>%
+      count(name)%>%
+      select(n, name, manaCost, uuid),
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
-      filter(providerListing == "retail")
-    , by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(n, card_name, manaCost, price)
+      filter(providerListing == "retail"),
+      by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+      select(n, name, manaCost, price)
     
     
   },
@@ -156,90 +181,129 @@ server <- function(input, output) {
     columnDefs = list(list(width = '20px', targets = c(0)))
   )) 
   
-  output$Sorcery <- renderDataTable({
+  output$Sorcery <- renderDataTable({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Sorcery" | types =="Tribal,Sorcery") %>%
-      select(card_name, manaCost) %>%
-      arrange(card_name)%>%
-      group_by(card_name, manaCost) %>%
-      count(card_name)%>%
-      select(n, card_name, manaCost)
+      select(name, manaCost, manaValue, uuid) %>%
+      group_by(name, manaCost, uuid) %>%
+      count(name)%>%
+      select(n, name, manaCost, uuid),
+    
+    cardPrices %>%
+      filter(priceProvider == input$selectProvider) %>%
+      filter(cardFinish == "normal") %>%
+      filter(providerListing == "retail"),
+    by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+    select(n, name, manaCost, price)
+    
   },
   options = list(
     autoWidth = TRUE,
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Instant <- renderDataTable({
+  output$Instant <- renderDataTable({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Instant") %>%
-      select(card_name, manaCost) %>%
-      arrange(card_name)%>%
-      group_by(card_name, manaCost) %>%
-      count(card_name)%>%
-      select(n, card_name, manaCost)
+      select(name, manaCost, manaValue, uuid) %>%
+      group_by(name, manaCost, uuid) %>%
+      count(name)%>%
+      select(n, name, manaCost, uuid),
+    
+    cardPrices %>%
+      filter(priceProvider == input$selectProvider) %>%
+      filter(cardFinish == "normal") %>%
+      filter(providerListing == "retail"),
+    by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+      select(n, name, manaCost, price)
+    
   },
   options = list(
     autoWidth = TRUE,
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Artifact <- renderDataTable({
+  output$Artifact <- renderDataTable({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Artifact") %>%
-      select(card_name, manaCost) %>%
-      arrange(card_name)%>%
-      group_by(card_name, manaCost) %>%
-      count(card_name)%>%
-      select(n, card_name, manaCost)
+      select(name, manaCost, manaValue, uuid) %>%
+      group_by(name, manaCost, uuid) %>%
+      count(name)%>%
+      select(n, name, manaCost, uuid),
+    
+    cardPrices %>%
+      filter(priceProvider == input$selectProvider) %>%
+      filter(cardFinish == "normal") %>%
+      filter(providerListing == "retail"),
+    by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+      select(n, name, manaCost, price)
+    
   },
   options = list(
     autoWidth = TRUE,
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Enchantment <- renderDataTable({
+  output$Enchantment <- renderDataTable({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Enchantment" | types == "Tribal,Enchantment") %>%
-      select(card_name, manaCost) %>%
-      arrange(card_name)%>%
-      group_by(card_name, manaCost) %>%
-      count(card_name)%>%
-      select(n, card_name, manaCost)
+      select(name, manaCost, manaValue, uuid) %>%
+      group_by(name, manaCost, uuid) %>%
+      count(name)%>%
+      select(n, name, manaCost, uuid),
+    
+    cardPrices %>%
+      filter(priceProvider == input$selectProvider) %>%
+      filter(cardFinish == "normal") %>%
+      filter(providerListing == "retail"),
+    by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+      select(n, name, manaCost, price)
   },
   options = list(
     autoWidth = TRUE,
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Planeswalker <- renderDataTable({
+  output$Planeswalker <- renderDataTable({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Planeswalker") %>%
-      select(card_name, manaCost) %>%
-      arrange(card_name)%>%
-      group_by(card_name, manaCost) %>%
-      count(card_name)%>%
-      select(n, card_name, manaCost)
+      select(name, manaCost, manaValue, uuid) %>%
+      group_by(name, manaCost, uuid) %>%
+      count(name)%>%
+      select(n, name, manaCost, uuid),
+    
+    cardPrices %>%
+      filter(priceProvider == input$selectProvider) %>%
+      filter(cardFinish == "normal") %>%
+      filter(providerListing == "retail"),
+    by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+      select(n, name, manaCost, price)
   },
   options = list(
     autoWidth = TRUE,
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Land <- renderDataTable({
+  output$Land <- renderDataTable({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Land") %>%
-      select(card_name, manaCost) %>%
-      arrange(card_name)%>%
-      group_by(card_name, manaCost) %>%
-      count(card_name)%>%
-      select(n, card_name, manaCost)
+      select(name, manaCost, manaValue, uuid) %>%
+      group_by(name, manaCost, uuid) %>%
+      count(name)%>%
+      select(n, name, manaCost, uuid),
+    
+    cardPrices %>%
+      filter(priceProvider == input$selectProvider) %>%
+      filter(cardFinish == "normal") %>%
+      filter(providerListing == "retail"),
+    by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+      select(n, name, manaCost, price)
   },
   options = list(
     autoWidth = TRUE,
@@ -319,7 +383,32 @@ server <- function(input, output) {
     
   })
   
-  
+  output$deckCosts <- renderPlot({
+    
+    ggplot(merge(
+      Master_Data %>%
+        #    filter(commander_deck == input$select) %>%
+        filter(name != "Forest") %>%
+        filter(name != "Swamp") %>%
+        filter(name != "Mountain") %>%
+        select(commander_deck, name, manaCost, manaValue, uuid) %>%
+        group_by(commander_deck, name, manaCost, uuid) %>%
+        count(name)%>%
+        select(commander_deck, n, name, manaCost, uuid),
+      
+      cardPrices %>%
+        filter(priceProvider == input$selectProvider) %>%
+        filter(cardFinish == "normal") %>%
+        filter(providerListing == "retail"),
+      by.x = 'uuid', by.y = 'uuid', all.x =TRUE),
+      aes(x = commander_deck, y = price, fill = commander_deck)) +
+      geom_boxplot() +
+      coord_flip() +
+      stat_summary(fun = mean, geom = "point", col = "red") +
+      stat_summary(fun = mean, geom = "text", col = "red", vjust = 1.5, aes(label = paste("Mean:", round(..y.., digits = 1)))) +
+      theme(legend.position = "none") 
+    
+  })
   
 }
 
