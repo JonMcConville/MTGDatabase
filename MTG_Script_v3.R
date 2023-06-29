@@ -40,15 +40,19 @@ cardPrices <- read.csv("DataFiles/cardPrices.csv")
 Lathril <-read.csv("Decks/Lathril_0623.csv")
 Magda <- read.csv("Decks/Magda_0624.csv")
 Titania <- read.csv("Decks/Titania_230625.csv")
+Dina <- read.csv("Decks/Dina_290623.csv")
+Doran <- read.csv("Decks/Doran_290623.csv")
 
 
 
 Lathril$commander_deck <-c("Lathril, Blade of the Elves")
 Magda$commander_deck <- c("Magda, Brazen Outlaw")
 Titania$commander_deck <- c("Titania, Protector of Argoth")
+Dina$commander_deck <- c("Dina, Soul Steeper")
+Doran$commander_deck <- c("Doran, the Siege Tower")
 
 
-MasterFrame <- rbind(Lathril,Magda,Titania)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran)
 
 
 

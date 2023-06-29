@@ -95,12 +95,13 @@ ui<- dashboardPage(
                column(width = 6,
             
                       
-              titlePanel(title = "Deck Costs"),
+              titlePanel(title = "Deck Costs - Distribution"),
               plotOutput("deckCosts")),
             
             column(width = 6,
                    
-                   
+              titlePanel(title = "Deck Costs - Absolute"),
+              dataTableOutput("deckPrice")                   
                    )
                       
                       
@@ -116,7 +117,22 @@ ui<- dashboardPage(
     
   )),
   
-  tabItem(tabName = "CardBoard"),
+  tabItem(tabName = "CardBoard",
+          
+          fluidRow(
+            column(width = 6,
+          
+          
+          textInput("cardLookup", label = h3("Card Name"), value = "")),
+          
+          column(width = 6,
+          
+          checkboxGroupInput("manaLookup", label = h3("Mana Colours"), 
+                             choices = list("White" = 1, "Blue" = 2, "Black" = 3, "Red" = 4, "Green" =5),
+                             selected = 1)))
+          
+          
+          ),
   
   tabItem(tabName = "OptionBoard",
           
@@ -391,6 +407,8 @@ server <- function(input, output) {
         filter(name != "Forest") %>%
         filter(name != "Swamp") %>%
         filter(name != "Mountain") %>%
+        filter(name != "Plains") %>%
+        filter(name != "Island") %>%
         select(commander_deck, name, manaCost, manaValue, uuid) %>%
         group_by(commander_deck, name, manaCost, uuid) %>%
         count(name)%>%
@@ -407,6 +425,28 @@ server <- function(input, output) {
       stat_summary(fun = mean, geom = "point", col = "red") +
       stat_summary(fun = mean, geom = "text", col = "red", vjust = 1.5, aes(label = paste("Mean:", round(..y.., digits = 1)))) +
       theme(legend.position = "none") 
+    
+  })
+  
+  
+  output$deckPrice <- renderDataTable({
+    merge(
+      Master_Data %>%
+        select(commander_deck, name, manaCost, manaValue, uuid) %>%
+        group_by(commander_deck, name, manaCost, uuid) %>%
+        count(name)%>%
+        select(commander_deck, n, name, manaCost, uuid),
+      
+      cardPrices %>%
+        filter(priceProvider == input$selectProvider) %>%
+        filter(cardFinish == "normal") %>%
+        filter(providerListing == "retail"),
+      by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+      select(commander_deck, price)%>%
+      group_by(commander_deck)%>%
+      summarise("Deck Cost" = sum(price, na.rm = TRUE))
+    
+    
     
   })
   
