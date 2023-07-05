@@ -20,11 +20,9 @@ ui<- dashboardPage(
       tabItem(tabName = "DeckBoard",
 
   
-  
   tabsetPanel(
     tabPanel(title = "Decks",
 
-             
              
              selectInput(inputId="select", label = h3("Select Deck"), 
                          choices = c("Choose Deck ...",MasterFrame %>% filter(commander == "Y") %>%
@@ -103,16 +101,11 @@ ui<- dashboardPage(
               titlePanel(title = "Deck Costs - Absolute"),
               dataTableOutput("deckPrice")                   
                    )
-                      
-                      
-                      
+
+
              )
              
     )
-    
-    
-    
-    
     
     
   )),
@@ -138,17 +131,18 @@ ui<- dashboardPage(
           
           radioButtons("selectProvider", label = h3("Price Provider"),
                        choices = list("Card Hoarder" = "cardhoarder", "TCG Player" = "tcgplayer", "Card Market (default)" = "cardmarket", "Card Kingdom" = "cardkingdom", "Card Sphere" = "cardsphere"), 
-                       selected = "cardmarket")
+                       selected = "cardmarket"),
+          
+          actionButton("priceUpdate", label = "Update Prices"),
+          
+          actionButton("dbUpdate", label = "Update Card Database"),
           
           )
   
   
     )
   ))
-
-
   
-
 
 server <- function(input, output) {
   
@@ -157,16 +151,16 @@ server <- function(input, output) {
     (Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(commander =="Y") %>%
-      group_by(name,manaCost, uuid)%>%
+      group_by(name,manaCost, uuid, edhrecSaltiness)%>%
       count(name) %>%
-      select(n, name, manaCost, uuid)), 
+      select(n, name, manaCost, uuid, edhrecSaltiness)), 
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail")
       , by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(n, name, manaCost, price)
+      select(n, name, manaCost, price, edhrecSaltiness)
   },
   options = list(
     autoWidth = TRUE,
@@ -178,17 +172,17 @@ server <- function(input, output) {
       filter(commander_deck == input$select) %>%
       filter(name != input$select) %>%
       filter(types == "Creature" | types =="Artifact, Creature" | types =="Enchantment, Creature" | types =="Land, Creature") %>%
-      select(name,manaCost,manaValue, uuid) %>%
-      group_by(name, manaCost, uuid) %>%
+      select(name,manaCost,manaValue, uuid, edhrecSaltiness) %>%
+      group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
-      select(n, name, manaCost, uuid),
+      select(n, name, manaCost, uuid, edhrecSaltiness),
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail"),
       by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(n, name, manaCost, price)
+      select(n, name, manaCost, price, edhrecSaltiness)
     
     
   },
@@ -201,17 +195,17 @@ server <- function(input, output) {
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Sorcery" | types =="Tribal,Sorcery") %>%
-      select(name, manaCost, manaValue, uuid) %>%
-      group_by(name, manaCost, uuid) %>%
+      select(name, manaCost, manaValue, uuid, edhrecSaltiness) %>%
+      group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
-      select(n, name, manaCost, uuid),
+      select(n, name, manaCost, uuid, edhrecSaltiness),
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail"),
     by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-    select(n, name, manaCost, price)
+    select(n, name, manaCost, price, edhrecSaltiness)
     
   },
   options = list(
@@ -223,17 +217,17 @@ server <- function(input, output) {
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Instant") %>%
-      select(name, manaCost, manaValue, uuid) %>%
-      group_by(name, manaCost, uuid) %>%
+      select(name, manaCost, manaValue, uuid, edhrecSaltiness) %>%
+      group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
-      select(n, name, manaCost, uuid),
+      select(n, name, manaCost, uuid, edhrecSaltiness),
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail"),
     by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(n, name, manaCost, price)
+      select(n, name, manaCost, price, edhrecSaltiness)
     
   },
   options = list(
@@ -245,17 +239,17 @@ server <- function(input, output) {
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Artifact") %>%
-      select(name, manaCost, manaValue, uuid) %>%
-      group_by(name, manaCost, uuid) %>%
+      select(name, manaCost, manaValue, uuid, edhrecSaltiness) %>%
+      group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
-      select(n, name, manaCost, uuid),
+      select(n, name, manaCost, uuid, edhrecSaltiness),
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail"),
     by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(n, name, manaCost, price)
+      select(n, name, manaCost, price, edhrecSaltiness)
     
   },
   options = list(
@@ -267,17 +261,17 @@ server <- function(input, output) {
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Enchantment" | types == "Tribal,Enchantment") %>%
-      select(name, manaCost, manaValue, uuid) %>%
-      group_by(name, manaCost, uuid) %>%
+      select(name, manaCost, manaValue, uuid, edhrecSaltiness) %>%
+      group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
-      select(n, name, manaCost, uuid),
+      select(n, name, manaCost, uuid, edhrecSaltiness),
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail"),
     by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(n, name, manaCost, price)
+      select(n, name, manaCost, price, edhrecSaltiness)
   },
   options = list(
     autoWidth = TRUE,
@@ -288,17 +282,17 @@ server <- function(input, output) {
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Planeswalker") %>%
-      select(name, manaCost, manaValue, uuid) %>%
-      group_by(name, manaCost, uuid) %>%
+      select(name, manaCost, manaValue, uuid, edhrecSaltiness) %>%
+      group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
-      select(n, name, manaCost, uuid),
+      select(n, name, manaCost, uuid, edhrecSaltiness),
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail"),
     by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(n, name, manaCost, price)
+      select(n, name, manaCost, price, edhrecSaltiness)
   },
   options = list(
     autoWidth = TRUE,
@@ -309,17 +303,17 @@ server <- function(input, output) {
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Land") %>%
-      select(name, manaCost, manaValue, uuid) %>%
-      group_by(name, manaCost, uuid) %>%
+      select(name, manaCost, manaValue, uuid, edhrecSaltiness) %>%
+      group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
-      select(n, name, manaCost, uuid),
+      select(n, name, manaCost, uuid, edhrecSaltiness),
     
     cardPrices %>%
       filter(priceProvider == input$selectProvider) %>%
       filter(cardFinish == "normal") %>%
       filter(providerListing == "retail"),
     by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(n, name, manaCost, price)
+      select(n, name, manaCost, price, edhrecSaltiness)
   },
   options = list(
     autoWidth = TRUE,
@@ -349,8 +343,6 @@ server <- function(input, output) {
                               plot.title = element_text(hjust = 0.5, color = "#666666"))
     
   })
-  
-  
   
   
   output$Curve <- renderPlot({
@@ -404,11 +396,7 @@ server <- function(input, output) {
     ggplot(merge(
       Master_Data %>%
         #    filter(commander_deck == input$select) %>%
-        filter(name != "Forest") %>%
-        filter(name != "Swamp") %>%
-        filter(name != "Mountain") %>%
-        filter(name != "Plains") %>%
-        filter(name != "Island") %>%
+        filter(name != "Forest" | name != "Swamp" | name != "Mountain" | name != "Plains" | name != "Island") %>%
         select(commander_deck, name, manaCost, manaValue, uuid) %>%
         group_by(commander_deck, name, manaCost, uuid) %>%
         count(name)%>%
@@ -424,7 +412,9 @@ server <- function(input, output) {
       coord_flip() +
       stat_summary(fun = mean, geom = "point", col = "red") +
       stat_summary(fun = mean, geom = "text", col = "red", vjust = 1.5, aes(label = paste("Mean:", round(..y.., digits = 1)))) +
-      theme(legend.position = "none") 
+      theme(legend.position = "none") +
+      xlab("Deck Name") + 
+      ylab("Card Costs")
     
   })
   
@@ -447,8 +437,39 @@ server <- function(input, output) {
       summarise("Deck Cost" = sum(price, na.rm = TRUE))
     
     
-    
   })
+  
+  {observeEvent(input$priceUpdate,{
+    
+    cardPricesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardPrices.csv")
+    write.csv(cardPricesdl, "DataFiles/cardPrices.csv", row.names=FALSE)
+    cardPrices <- read.csv("DataFiles/cardPrices.csv")
+    
+  })}
+  
+  {observeEvent(input$dbUpdate,{
+    
+    cardsdl <- read.csv("https://mtgjson.com/api/v5/csv/cards.csv")
+    setsdl <- read.csv("https://mtgjson.com/api/v5/csv/sets.csv")
+    tokensdl <- read.csv("https://mtgjson.com/api/v5/csv/tokens.csv")
+    cardRulingsdl <- read.csv("https://mtgjson.com/api/v5/csv/cardRulings.csv")
+    cardLegalitiesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardLegalities.csv")
+    metadl <- read.csv("https://mtgjson.com/api/v5/csv/meta.csv")
+    
+    write.csv(cardsdl, "DataFiles/cards.csv", row.names=FALSE)
+    write.csv(setsdl, "DataFiles/sets.csv", row.names=FALSE)
+    write.csv(tokensdl, "DataFiles/tokens.csv", row.names=FALSE)
+    write.csv(cardRulingsdl, "DataFiles/cardRulings.csv", row.names=FALSE)
+    write.csv(cardLegalitiesdl, "DataFiles/cardsLegalities.csv", row.names=FALSE)
+    write.csv(metadl, "Datafiles/meta.csv", row.names=FALSE)
+    
+    ##Reading in Data ----
+    
+    cards <- read.csv("DataFiles/cards.csv")
+    
+  })}  
+
+  
   
 }
 

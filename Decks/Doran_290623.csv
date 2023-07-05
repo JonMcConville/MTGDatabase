@@ -5,7 +5,7 @@ cardNumber,setCode,commander,foil
 273,MID,,
 276,MID,,Y
 168,NEC,,
-5,FNM,,Y
+5,F15,,Y
 190,M19,,
 68,ZNC,,
 200,M19,,
@@ -98,3 +98,4 @@ cardNumber,setCode,commander,foil
 147,MOR,,
 183,GTC,,
 264,USG,,
+10,SLX,,

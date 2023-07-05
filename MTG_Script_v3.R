@@ -42,6 +42,12 @@ Magda <- read.csv("Decks/Magda_0624.csv")
 Titania <- read.csv("Decks/Titania_230625.csv")
 Dina <- read.csv("Decks/Dina_290623.csv")
 Doran <- read.csv("Decks/Doran_290623.csv")
+Sakashima <- read.csv("Decks/Sakashima_020723.csv")
+Liesa <- read.csv("Decks/Liesa_020723.csv")
+Ghired <- read.csv("Decks/Ghired_020723.csv")
+Ashcoat <- read.csv("Decks/Ashcoat_020723.csv")
+Lorescale <- read.csv("Decks/Lorescale_020723.csv")
+Mizzix <- read.csv("Decks/Mizzix_040723.csv")
 
 
 
@@ -50,9 +56,15 @@ Magda$commander_deck <- c("Magda, Brazen Outlaw")
 Titania$commander_deck <- c("Titania, Protector of Argoth")
 Dina$commander_deck <- c("Dina, Soul Steeper")
 Doran$commander_deck <- c("Doran, the Siege Tower")
+Sakashima$commander_deck <- c("Sakashima the Impostor")
+Liesa$commander_deck <- c("Liesa, Shroud of Dusk")
+Ghired$commander_deck <- c("Ghired, Conclave Exile")
+Ashcoat$commander_deck <- c("Ashcoat of the Shadow Swarm")
+Lorescale$commander_deck <- c("Lorescale Coatl")
+Mizzix$commander_deck <- c("Mizzix of the Izmagnus")
 
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Liesa,Ghired,Ashcoat,Lorescale,Mizzix)
 
 
 
@@ -111,6 +123,12 @@ Master_Data_Landless <- Master_Data %>%
   arrange(manaValue)
 
 
+# End of file cleansing process
+
+# Play Area ----
+
+
+
 merge(
   Master_Data %>%
 #    filter(commander_deck == input$select) %>%
@@ -129,6 +147,11 @@ merge(
   group_by(commander_deck)%>%
   summarise("Deck Cost" = sum(price, na.rm = TRUE))
 
+
+
+Master_Data %>%
+  filter(commander_deck == "Doran, the Siege Tower")%>%
+  select(cardNumber, setCode, name)
 
 
 
@@ -180,4 +203,7 @@ Price_Check <- merge(
     filter(providerListing == "retail"),
   by.x = 'uuid', by.y = 'uuid', all.x =TRUE)
 
+
+Master_Data %>%
+  colnames()
 
