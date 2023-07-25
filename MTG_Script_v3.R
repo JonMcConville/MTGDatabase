@@ -13,6 +13,8 @@ library(shinydashboard)
 
 #Updating csv files from online database ----
 
+options(timeout = 180)
+
 cardsdl <- read.csv("https://mtgjson.com/api/v5/csv/cards.csv")
 setsdl <- read.csv("https://mtgjson.com/api/v5/csv/sets.csv")
 tokensdl <- read.csv("https://mtgjson.com/api/v5/csv/tokens.csv")
@@ -36,6 +38,7 @@ write.csv(metadl, "Datafiles/meta.csv", row.names=FALSE)
 
 cards <- read.csv("DataFiles/cards.csv")
 cardPrices <- read.csv("DataFiles/cardPrices.csv")
+legalities <- read.csv("DataFiles/cardsLegalities.csv")
 
 Lathril <-read.csv("Decks/Lathril_0623.csv")
 Magda <- read.csv("Decks/Magda_0624.csv")
@@ -48,6 +51,7 @@ Ghired <- read.csv("Decks/Ghired_020723.csv")
 Ashcoat <- read.csv("Decks/Ashcoat_020723.csv")
 Lorescale <- read.csv("Decks/Lorescale_020723.csv")
 Mizzix <- read.csv("Decks/Mizzix_040723.csv")
+Anikthea <- read.csv("Decks/Anikthea_230723.csv")
 
 
 
@@ -62,9 +66,10 @@ Ghired$commander_deck <- c("Ghired, Conclave Exile")
 Ashcoat$commander_deck <- c("Ashcoat of the Shadow Swarm")
 Lorescale$commander_deck <- c("Lorescale Coatl")
 Mizzix$commander_deck <- c("Mizzix of the Izmagnus")
+Anikthea$commander_deck <- c("Anikthea, Hand of Erebos")
 
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Liesa,Ghired,Ashcoat,Lorescale,Mizzix)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Liesa,Ghired,Ashcoat,Lorescale,Mizzix,Anikthea)
 
 
 
@@ -117,6 +122,9 @@ cards <- cbind(cards, ManaDiscrep = cards$faceManaValue - cards$GreenMana - card
 
 
 Master_Data <- merge(MasterFrame, (cards%>%filter(side!="b")), by.x = c('cardNumber','setCode'), by.y = c('number','setCode'), all.x = TRUE)
+names(legalities)[names(legalities) == 'commander'] <- 'commanderEDH'
+
+Master_Data <- merge(Master_Data, legalities, by.x = 'uuid', by.y = 'uuid')
 
 Master_Data_Landless <- Master_Data %>%
   filter(types != "Land") %>%
@@ -207,3 +215,30 @@ Price_Check <- merge(
 Master_Data %>%
   colnames()
 
+
+merge(
+  (Master_Data %>%
+     filter(commander_deck == "Ghired, Conclave Exile") %>%
+#     filter(commander =="Y") %>%
+     group_by(name, manaCost, uuid, edhrecSaltiness, paupercommander)%>%
+     count(name) %>%
+     select(n, name, manaCost, uuid, edhrecSaltiness, paupercommander)), 
+  
+  cardPrices %>%
+    filter(priceProvider == "cardmarket") %>%
+    filter(cardFinish == "normal") %>%
+    filter(providerListing == "retail")
+  , by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+  select(n, name, manaCost, price, edhrecSaltiness, paupercommander)
+
+
+colnames(Master_Data)
+
+
+cards %>%
+  filter(setCode == "CMM")%>%
+  select(rarity, name)%>%
+  arrange(name)%>%
+  distinct(name, .keep_all = TRUE)%>%
+  group_by(rarity)%>%
+  summarise(count = n())
