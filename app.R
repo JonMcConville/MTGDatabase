@@ -25,6 +25,9 @@ Ashcoat <- read.csv("Decks/Ashcoat_020723.csv")
 Lorescale <- read.csv("Decks/Lorescale_020723.csv")
 Mizzix <- read.csv("Decks/Mizzix_040723.csv")
 Anikthea <- read.csv("Decks/Anikthea_230723.csv")
+CMM <- read.csv("Decks/CMM_040823.csv")
+Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
+Marchesa <- read.csv("Decks/Marchesa_091023.csv")
 
 
 
@@ -40,8 +43,11 @@ Ashcoat$commander_deck <- c("Ashcoat of the Shadow Swarm")
 Lorescale$commander_deck <- c("Lorescale Coatl")
 Mizzix$commander_deck <- c("Mizzix of the Izmagnus")
 Anikthea$commander_deck <- c("Anikthea, Hand of Erebos")
+CMM$commander_deck <- c("CMM")
+Ghyrson$commander_deck <- c("Ghyrson Starn, Kelermorph")
+Marchesa$commander_deck <- c("Queen Marchesa")
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Liesa,Ghired,Ashcoat,Lorescale,Mizzix,Anikthea)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Liesa,Ghired,Ashcoat,Lorescale,Mizzix,Anikthea,CMM,Ghyrson,Marchesa)
 
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is

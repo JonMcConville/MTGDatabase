@@ -34,7 +34,7 @@ CMMComplete %>%
   summarise(median(price, na.rm = TRUE))
 
 CMMComplete %>%
-  filter(rarity == "rare") %>%
+  filter(rarity == "mythic") %>%
   arrange(desc(price))
 
 Checklist5 <- replicate(10000, {

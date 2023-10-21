@@ -52,7 +52,9 @@ Ashcoat <- read.csv("Decks/Ashcoat_020723.csv")
 Lorescale <- read.csv("Decks/Lorescale_020723.csv")
 Mizzix <- read.csv("Decks/Mizzix_040723.csv")
 Anikthea <- read.csv("Decks/Anikthea_230723.csv")
-
+CMM <- read.csv("Decks/CMM_040823.csv")
+Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
+Marchesa <- read.csv("Decks/Marchesa_091023.csv")
 
 
 Lathril$commander_deck <-c("Lathril, Blade of the Elves")
@@ -67,9 +69,12 @@ Ashcoat$commander_deck <- c("Ashcoat of the Shadow Swarm")
 Lorescale$commander_deck <- c("Lorescale Coatl")
 Mizzix$commander_deck <- c("Mizzix of the Izmagnus")
 Anikthea$commander_deck <- c("Anikthea, Hand of Erebos")
+CMM$commander_deck <- c("CMM")
+Ghyrson$commander_deck <- c("Ghyrson Starn, Kelermorph")
+Marchesa$commander_deck <- c("Queen Marchesa")
 
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Liesa,Ghired,Ashcoat,Lorescale,Mizzix,Anikthea)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Liesa,Ghired,Ashcoat,Lorescale,Mizzix,Anikthea,CMM,Ghyrson,Marchesa)
 
 
 
@@ -233,6 +238,7 @@ merge(
 
 
 colnames(Master_Data)
+write.csv(Master_Data,file = "Master_data.csv")
 
 
 cards %>%
@@ -242,3 +248,23 @@ cards %>%
   distinct(name, .keep_all = TRUE)%>%
   group_by(rarity)%>%
   summarise(count = n())
+
+
+
+merge(Master_Data %>%
+  filter(commander_deck == "CMM") %>%
+  select(name, manaCost, manaValue, uuid, edhrecSaltiness, rarity) %>%
+  group_by(name, manaCost, uuid, edhrecSaltiness, rarity) %>%
+  count(name)%>%
+  select(n, name, manaCost, uuid, edhrecSaltiness, rarity),
+
+cardPrices %>%
+  filter(priceProvider == "cardmarket") %>%
+  filter(cardFinish == "normal") %>%
+  filter(providerListing == "retail"),
+by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+  select(n, name, manaCost, price, edhrecSaltiness, rarity)%>%
+  arrange(desc(price))%>%
+  filter(rarity == "common" | rarity =="uncommon")%>%
+  filter(price>=1.5)
+
