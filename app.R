@@ -562,7 +562,12 @@ server <- function(input, output) {
   {observeEvent(input$priceUpdate,{
     
     cardPricesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardPrices.csv")
-    write.csv(cardPricesdl, "DataFiles/cardPrices.csv", row.names=FALSE)
+    
+    cardPricesdb <- cardPricesdb %>%
+      anti_join(cardPricesdl, by = c("cardFinish", "currency", "gameAvailability", "priceProvider", "providerListing")) %>%
+      bind_rows(cardPricesdl)
+    
+    write.csv(cardPricesdb, "DataFiles/cardPrices.csv", row.names=FALSE)
     cardPrices <- read.csv("DataFiles/cardPrices.csv")
     
   })}

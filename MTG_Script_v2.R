@@ -21,11 +21,15 @@ cardPricesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardPrices.csv")
 cardLegalitiesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardLegalities.csv")
 metadl <- read.csv("https://mtgjson.com/api/v5/csv/meta.csv")
 
+cardPricesdb <- cardPricesdb %>%
+  anti_join(cardPricesdl, by = c("cardFinish", "currency", "gameAvailability", "priceProvider", "providerListing")) %>%
+  bind_rows(cardPricesdl)
+
 write.csv(cardsdl, "DataFiles/cards.csv", row.names=FALSE)
 write.csv(setsdl, "DataFiles/sets.csv", row.names=FALSE)
 write.csv(tokensdl, "DataFiles/tokens.csv", row.names=FALSE)
 write.csv(cardRulingsdl, "DataFiles/cardRulings.csv", row.names=FALSE)
-write.csv(cardPricesdl, "DataFiles/cardPrices.csv", row.names=FALSE)
+write.csv(cardPricesdb, "DataFiles/cardPrices.csv", row.names=FALSE)
 write.csv(cardLegalitiesdl, "DataFiles/cardsLegalities.csv", row.names=FALSE)
 write.csv(metadl, "Datafiles/meta.csv", row.names=FALSE)
 
@@ -323,3 +327,10 @@ Master_Data %>%
   select(n, card_name, manaCost, uuid)
 
 colnames(cards_slim)
+
+cardPricesdb <- cardPricesdb %>%
+  anti_join(cardPricesdl, by = c("cardFinish", "currency", "gameAvailability", "priceProvider", "providerListing")) %>%
+  bind_rows(cardPricesdl)
+
+
+
