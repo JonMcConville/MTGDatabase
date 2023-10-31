@@ -9,25 +9,49 @@ library(pivottabler)
 library(shiny)
 library(shinydashboard)
 
-cards <- read.csv("DataFiles/cards.csv")
-cardPrices <- read.csv("DataFiles/cardPrices.csv")
-legalities <- read.csv("DataFiles/cardsLegalities.csv")
+# Define the folder path you want to check and create if it doesn't exist
+CaPData_path <- "C:/MTGDataFiles/CardandPricesData"
+Deck_path <- "C:/MTGDataFiles/Decks"
 
-Lathril <-read.csv("Decks/Lathril_0623.csv")
-Magda <- read.csv("Decks/Magda_0624.csv")
-Titania <- read.csv("Decks/Titania_230625.csv")
-Dina <- read.csv("Decks/Dina_290623.csv")
-Doran <- read.csv("Decks/Doran_290623.csv")
-Sakashima <- read.csv("Decks/Sakashima_020723.csv")
-Liesa <- read.csv("Decks/Liesa_020723.csv")
-Ghired <- read.csv("Decks/Ghired_020723.csv")
-Ashcoat <- read.csv("Decks/Ashcoat_020723.csv")
-Lorescale <- read.csv("Decks/Lorescale_020723.csv")
-Mizzix <- read.csv("Decks/Mizzix_040723.csv")
-Anikthea <- read.csv("Decks/Anikthea_230723.csv")
-CMM <- read.csv("Decks/CMM_040823.csv")
-Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
-Marchesa <- read.csv("Decks/Marchesa_091023.csv")
+# Check if the folder exists
+if (!file.exists(CaPData_path)) {
+  # If the folder doesn't exist, create it
+  dir.create(CaPData_path, recursive = TRUE)
+  cat("Folder created:", CaPData_path, "\n")
+} else {
+  cat("Folder already exists:", CaPData_path, "\n")
+}
+
+# Check if the folder exists
+if (!file.exists(Deck_path)) {
+  # If the folder doesn't exist, create it
+  dir.create(Deck_path, recursive = TRUE)
+  cat("Folder created:", Deck_path, "\n")
+} else {
+  cat("Folder already exists:", Deck_path, "\n")
+}
+
+
+
+cards <- read.csv("C:/MTGDataFiles/CardandPricesData/cards.csv")
+cardPrices <- read.csv("C:/MTGDataFiles/CardandPricesData/cardPrices.csv")
+legalities <- read.csv("C:/MTGDataFiles/CardandPricesData/cardsLegalities.csv")
+
+Lathril <-read.csv("C:/MTGDataFiles/Decks/Lathril_0623.csv")
+Magda <- read.csv("C:/MTGDataFiles/Decks/Magda_0624.csv")
+Titania <- read.csv("C:/MTGDataFiles/Decks/Titania_230625.csv")
+Dina <- read.csv("C:/MTGDataFiles/Decks/Dina_290623.csv")
+Doran <- read.csv("C:/MTGDataFiles/Decks/Doran_290623.csv")
+Sakashima <- read.csv("C:/MTGDataFiles/Decks/Sakashima_020723.csv")
+Liesa <- read.csv("C:/MTGDataFiles/Decks/Liesa_020723.csv")
+Ghired <- read.csv("C:/MTGDataFiles/Decks/Ghired_020723.csv")
+Ashcoat <- read.csv("C:/MTGDataFiles/Decks/Ashcoat_020723.csv")
+Lorescale <- read.csv("C:/MTGDataFiles/Decks/Lorescale_020723.csv")
+Mizzix <- read.csv("C:/MTGDataFiles/Decks/Mizzix_040723.csv")
+Anikthea <- read.csv("C:/MTGDataFiles/Decks/Anikthea_230723.csv")
+CMM <- read.csv("C:/MTGDataFiles/Decks/CMM_040823.csv")
+Ghyrson <- read.csv("C:/MTGDataFiles/Decks/Ghyrson_240923.csv")
+Marchesa <- read.csv("C:/MTGDataFiles/Decks/Marchesa_091023.csv")
 
 
 
@@ -567,8 +591,8 @@ server <- function(input, output) {
       anti_join(cardPricesdl, by = c("cardFinish", "currency", "gameAvailability", "priceProvider", "providerListing")) %>%
       bind_rows(cardPricesdl)
     
-    write.csv(cardPricesdb, "DataFiles/cardPrices.csv", row.names=FALSE)
-    cardPrices <- read.csv("DataFiles/cardPrices.csv")
+    write.csv(cardPricesdb, "C:/MTGDataFiles/CardandPricesData/cardPrices.csv", row.names=FALSE)
+    cardPrices <- read.csv("C:/MTGDataFiles/CardandPricesData/cardPrices.csv")
     
   })}
   
@@ -583,16 +607,16 @@ server <- function(input, output) {
     cardLegalitiesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardLegalities.csv")
     metadl <- read.csv("https://mtgjson.com/api/v5/csv/meta.csv")
     
-    write.csv(cardsdl, "DataFiles/cards.csv", row.names=FALSE)
-    write.csv(setsdl, "DataFiles/sets.csv", row.names=FALSE)
-    write.csv(tokensdl, "DataFiles/tokens.csv", row.names=FALSE)
-    write.csv(cardRulingsdl, "DataFiles/cardRulings.csv", row.names=FALSE)
-    write.csv(cardLegalitiesdl, "DataFiles/cardsLegalities.csv", row.names=FALSE)
-    write.csv(metadl, "Datafiles/meta.csv", row.names=FALSE)
+    write.csv(cardsdl, "C:/MTGDataFiles/CardandPricesData/cards.csv", row.names=FALSE)
+    write.csv(setsdl, "C:/MTGDataFiles/CardandPricesData/sets.csv", row.names=FALSE)
+    write.csv(tokensdl, "C:/MTGDataFiles/CardandPricesData/tokens.csv", row.names=FALSE)
+    write.csv(cardRulingsdl, "C:/MTGDataFiles/CardandPricesData/cardRulings.csv", row.names=FALSE)
+    write.csv(cardLegalitiesdl, "C:/MTGDataFiles/CardandPricesData/cardsLegalities.csv", row.names=FALSE)
+    write.csv(metadl, "C:/MTGDataFiles/CardandPricesData/meta.csv", row.names=FALSE)
     
     ##Reading in Data ----
     
-    cards <- read.csv("DataFiles/cards.csv")
+    cards <- read.csv("C:/MTGDataFiles/CardandPricesData/cards.csv")
     
   })}  
 
