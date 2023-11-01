@@ -37,21 +37,21 @@ cards <- read.csv("C:/MTGDataFiles/CardandPricesData/cards.csv")
 cardPrices <- read.csv("C:/MTGDataFiles/CardandPricesData/cardPrices.csv")
 legalities <- read.csv("C:/MTGDataFiles/CardandPricesData/cardsLegalities.csv")
 
-Lathril <-read.csv("C:/MTGDataFiles/Decks/Lathril_0623.csv")
-Magda <- read.csv("C:/MTGDataFiles/Decks/Magda_0624.csv")
-Titania <- read.csv("C:/MTGDataFiles/Decks/Titania_230625.csv")
-Dina <- read.csv("C:/MTGDataFiles/Decks/Dina_290623.csv")
-Doran <- read.csv("C:/MTGDataFiles/Decks/Doran_290623.csv")
-Sakashima <- read.csv("C:/MTGDataFiles/Decks/Sakashima_020723.csv")
-Liesa <- read.csv("C:/MTGDataFiles/Decks/Liesa_020723.csv")
-Ghired <- read.csv("C:/MTGDataFiles/Decks/Ghired_020723.csv")
-Ashcoat <- read.csv("C:/MTGDataFiles/Decks/Ashcoat_020723.csv")
-Lorescale <- read.csv("C:/MTGDataFiles/Decks/Lorescale_020723.csv")
-Mizzix <- read.csv("C:/MTGDataFiles/Decks/Mizzix_040723.csv")
-Anikthea <- read.csv("C:/MTGDataFiles/Decks/Anikthea_230723.csv")
-CMM <- read.csv("C:/MTGDataFiles/Decks/CMM_040823.csv")
-Ghyrson <- read.csv("C:/MTGDataFiles/Decks/Ghyrson_240923.csv")
-Marchesa <- read.csv("C:/MTGDataFiles/Decks/Marchesa_091023.csv")
+Lathril <-read.csv("Decks/Lathril_0623.csv")
+Magda <- read.csv("Decks/Magda_0624.csv")
+Titania <- read.csv("Decks/Titania_230625.csv")
+Dina <- read.csv("Decks/Dina_290623.csv")
+Doran <- read.csv("Decks/Doran_290623.csv")
+Sakashima <- read.csv("Decks/Sakashima_020723.csv")
+Liesa <- read.csv("Decks/Liesa_020723.csv")
+Ghired <- read.csv("Decks/Ghired_020723.csv")
+Ashcoat <- read.csv("Decks/Ashcoat_020723.csv")
+Lorescale <- read.csv("Decks/Lorescale_020723.csv")
+Mizzix <- read.csv("Decks/Mizzix_040723.csv")
+Anikthea <- read.csv("Decks/Anikthea_230723.csv")
+CMM <- read.csv("Decks/CMM_040823.csv")
+Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
+Marchesa <- read.csv("Decks/Marchesa_091023.csv")
 
 
 
@@ -315,7 +315,7 @@ server <- function(input, output) {
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(name != input$select) %>%
-      filter(types == "Creature" | types =="Artifact, Creature" | types =="Enchantment, Creature" | types =="Land, Creature") %>%
+      filter(types %in% c( "Creature", "Artifact, Creature", "Enchantment, Creature", "Land, Creature")) %>%
       select(name,manaCost,manaValue, uuid, edhrecSaltiness) %>%
       group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
@@ -404,7 +404,7 @@ server <- function(input, output) {
   output$Enchantment <- renderDataTable({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
-      filter(types == "Enchantment" | types == "Tribal,Enchantment") %>%
+      filter(types == "Enchantment" | types == "Tribal, Enchantment") %>%
       select(name, manaCost, manaValue, uuid, edhrecSaltiness) %>%
       group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
@@ -564,21 +564,28 @@ server <- function(input, output) {
   
   
   output$deckPrice <- renderDataTable({
-    merge(
-      Master_Data %>%
-        select(commander_deck, name, manaCost, manaValue, uuid) %>%
-        group_by(commander_deck, name, manaCost, uuid) %>%
-        count(name)%>%
-        select(commander_deck, n, name, manaCost, uuid),
+    left_join(
+      Master_Data%>%
+        select(commander_deck)%>%
+        count(commander_deck),
+      merge(
+        Master_Data %>%
+          select(commander_deck, name, manaCost, manaValue, uuid) %>%
+          group_by(commander_deck, name, manaCost, uuid) %>%
+          count(name)%>%
+          select(commander_deck, n, name, manaCost, uuid),
+        
+        cardPrices %>%
+          filter(priceProvider == input$selectProvider) %>%
+          filter(cardFinish == "normal") %>%
+          filter(providerListing == "retail"),
+        by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+        select(commander_deck, price)%>%
+        group_by(commander_deck)%>%
+        summarise("Deck Cost" = sum(price, na.rm = TRUE)),
       
-      cardPrices %>%
-        filter(priceProvider == input$selectProvider) %>%
-        filter(cardFinish == "normal") %>%
-        filter(providerListing == "retail"),
-      by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
-      select(commander_deck, price)%>%
-      group_by(commander_deck)%>%
-      summarise("Deck Cost" = sum(price, na.rm = TRUE))
+      by = 'commander_deck')%>%
+      select("Commander Deck" = commander_deck, "Card Count" = n, "Deck Cost")
     
     
   })

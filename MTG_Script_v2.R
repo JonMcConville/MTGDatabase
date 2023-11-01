@@ -334,3 +334,6 @@ cardPricesdb <- cardPricesdb %>%
 
 
 
+Master_Data %>%
+  select(types)%>%
+  distinct(types)

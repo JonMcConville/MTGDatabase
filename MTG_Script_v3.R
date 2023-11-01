@@ -297,3 +297,25 @@ by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
   filter(rarity == "common" | rarity =="uncommon")%>%
   filter(price>=1.5)
 
+
+left_join(
+  Master_Data%>%
+    select(commander_deck)%>%
+    count(commander_deck),
+  merge(
+    Master_Data %>%
+      select(commander_deck, name, manaCost, manaValue, uuid) %>%
+      group_by(commander_deck, name, manaCost, uuid) %>%
+      count(name)%>%
+      select(commander_deck, n, name, manaCost, uuid),
+    
+    cardPrices %>%
+      filter(priceProvider == "cardmarket") %>%
+      filter(cardFinish == "normal") %>%
+      filter(providerListing == "retail"),
+    by.x = 'uuid', by.y = 'uuid', all.x =TRUE) %>%
+    select(commander_deck, price)%>%
+    group_by(commander_deck)%>%
+    summarise("Deck Cost" = sum(price, na.rm = TRUE)),
+  
+  by = 'commander_deck')
