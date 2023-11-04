@@ -17,12 +17,12 @@ CaPData_path <- "C:/MTGDataFiles/CardandPricesData"
 Deck_path <- "C:/MTGDataFiles/Decks"
 
 # Check if the folder exists
-if (!file.exists(CaPData)) {
+if (!file.exists(CaPData_path)) {
   # If the folder doesn't exist, create it
-  dir.create(CaPData, recursive = TRUE)
-  cat("Folder created:", CaPData, "\n")
+  dir.create(CaPData_path, recursive = TRUE)
+  cat("Folder created:", CaPData_path, "\n")
 } else {
-  cat("Folder already exists:", CaPData, "\n")
+  cat("Folder already exists:", CaPData_path, "\n")
 }
 
 # Check if the folder exists
@@ -69,21 +69,21 @@ cards <- read.csv("C:/MTGDataFiles/CardandPricesData/cards.csv")
 cardPrices <- read.csv("C:/MTGDataFiles/CardandPricesData/cardPrices.csv")
 legalities <- read.csv("C:/MTGDataFiles/CardandPricesData/cardsLegalities.csv")
 
-Lathril <-read.csv("C:/MTGDataFiles/Decks/Lathril_0623.csv")
-Magda <- read.csv("C:/MTGDataFiles/Decks/Magda_0624.csv")
-Titania <- read.csv("C:/MTGDataFiles/Decks/Titania_230625.csv")
-Dina <- read.csv("C:/MTGDataFiles/Decks/Dina_290623.csv")
-Doran <- read.csv("C:/MTGDataFiles/Decks/Doran_290623.csv")
-Sakashima <- read.csv("C:/MTGDataFiles/Decks/Sakashima_020723.csv")
-Liesa <- read.csv("C:/MTGDataFiles/Decks/Liesa_020723.csv")
-Ghired <- read.csv("C:/MTGDataFiles/Decks/Ghired_020723.csv")
-Ashcoat <- read.csv("C:/MTGDataFiles/Decks/Ashcoat_020723.csv")
-Lorescale <- read.csv("C:/MTGDataFiles/Decks/Lorescale_020723.csv")
-Mizzix <- read.csv("C:/MTGDataFiles/Decks/Mizzix_040723.csv")
-Anikthea <- read.csv("C:/MTGDataFiles/Decks/Anikthea_230723.csv")
-CMM <- read.csv("C:/MTGDataFiles/Decks/CMM_040823.csv")
-Ghyrson <- read.csv("C:/MTGDataFiles/Decks/Ghyrson_240923.csv")
-Marchesa <- read.csv("C:/MTGDataFiles/Decks/Marchesa_091023.csv")
+Lathril <-read.csv("Decks/Lathril_0623.csv")
+Magda <- read.csv("Decks/Magda_0624.csv")
+Titania <- read.csv("Decks/Titania_230625.csv")
+Dina <- read.csv("Decks/Dina_290623.csv")
+Doran <- read.csv("Decks/Doran_290623.csv")
+Sakashima <- read.csv("Decks/Sakashima_020723.csv")
+Liesa <- read.csv("Decks/Liesa_020723.csv")
+Ghired <- read.csv("Decks/Ghired_020723.csv")
+Ashcoat <- read.csv("Decks/Ashcoat_020723.csv")
+Lorescale <- read.csv("Decks/Lorescale_020723.csv")
+Mizzix <- read.csv("Decks/Mizzix_040723.csv")
+Anikthea <- read.csv("Decks/Anikthea_230723.csv")
+CMM <- read.csv("Decks/CMM_040823.csv")
+Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
+Marchesa <- read.csv("Decks/Marchesa_091023.csv")
 
 
 Lathril$commander_deck <-c("Lathril, Blade of the Elves")
@@ -319,3 +319,10 @@ left_join(
     summarise("Deck Cost" = sum(price, na.rm = TRUE)),
   
   by = 'commander_deck')
+
+check <- Master_Data %>%
+  select(commander_deck, types) %>%
+  group_by(commander_deck, types)%>%
+  count(commander_deck)%>%
+  pivot_wider(names_from = types, values_from = n)
+

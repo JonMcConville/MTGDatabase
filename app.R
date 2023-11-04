@@ -71,7 +71,7 @@ CMM$commander_deck <- c("CMM")
 Ghyrson$commander_deck <- c("Ghyrson Starn, Kelermorph")
 Marchesa$commander_deck <- c("Queen Marchesa")
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Liesa,Ghired,Ashcoat,Lorescale,Mizzix,Anikthea,CMM,Ghyrson,Marchesa)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa)
 
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
@@ -564,7 +564,7 @@ server <- function(input, output) {
   
   
   output$deckPrice <- renderDataTable({
-    left_join(
+    merge(left_join(
       Master_Data%>%
         select(commander_deck)%>%
         count(commander_deck),
@@ -585,7 +585,19 @@ server <- function(input, output) {
         summarise("Deck Cost" = sum(price, na.rm = TRUE)),
       
       by = 'commander_deck')%>%
-      select("Commander Deck" = commander_deck, "Card Count" = n, "Deck Cost")
+        select("Commander Deck" = commander_deck, "Card Count" = n, "Deck Cost"),
+      Master_Data %>%
+        select(commander_deck, types) %>%
+        group_by(commander_deck, types)%>%
+        count(commander_deck)%>%
+        pivot_wider(names_from = types, values_from = n),
+      by.x = 'Commander Deck', by.y = 'commander_deck')%>%
+      mutate(Creatures = rowSums(across(c("Creature", "Enchantment, Creature", "Artifact, Creature", "Land, Creature")), na.rm=TRUE))%>%
+      mutate(Enchantments = rowSums(across(c("Enchantment", "Tribal, Enchantment")), na.rm=TRUE))%>%
+      mutate(Artifacts = rowSums(across(c("Artifact", "Enchantment, Artifact")), na.rm=TRUE))%>%
+      mutate(Sorceries = rowSums(across(c("Sorcery", "Tribal, Sorcery")), na.rm=TRUE))%>%
+      select('Commander Deck', 'Deck Cost', 'Card Count', Creatures, Sorceries, Instants = Instant, Artifacts, Enchantments, Planewalkers = Planeswalker, Lands = Land)
+
     
     
   })
@@ -594,11 +606,11 @@ server <- function(input, output) {
     
     cardPricesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardPrices.csv")
     
-    cardPricesdb <- cardPricesdb %>%
+    cardPrices <- cardPrices %>%
       anti_join(cardPricesdl, by = c("cardFinish", "currency", "gameAvailability", "priceProvider", "providerListing")) %>%
       bind_rows(cardPricesdl)
     
-    write.csv(cardPricesdb, "C:/MTGDataFiles/CardandPricesData/cardPrices.csv", row.names=FALSE)
+    write.csv(cardPrices, "C:/MTGDataFiles/CardandPricesData/cardPrices.csv", row.names=FALSE)
     cardPrices <- read.csv("C:/MTGDataFiles/CardandPricesData/cardPrices.csv")
     
   })}

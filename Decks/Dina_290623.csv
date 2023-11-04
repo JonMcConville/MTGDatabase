@@ -13,7 +13,7 @@ cardNumber,setCode,commander,foil
 63,C21,,
 65,JOU,,
 69,2X2,,
-69,C21,,
+206,SLD,,
 70,2X2,,
 70,J22,,
 82,MM2,,
@@ -63,7 +63,7 @@ cardNumber,setCode,commander,foil
 260,CMD,,
 155,2X2,,
 266,M21,,Y
-266,M21,,
+247,M20,,
 267,AFC,,
 267,M21,,Y
 269,STX,,Y
