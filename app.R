@@ -1,3 +1,5 @@
+#Libraries ----
+
 library(dplyr)
 library(tidyverse)
 library(stringdist)
@@ -8,6 +10,8 @@ library(wesanderson)
 library(pivottabler)
 library(shiny)
 library(shinydashboard)
+
+##Processing Files ----
 
 # Define the folder path you want to check and create if it doesn't exist
 CaPData_path <- "C:/MTGDataFiles/CardandPricesData"
@@ -52,6 +56,7 @@ Anikthea <- read.csv("Decks/Anikthea_230723.csv")
 CMM <- read.csv("Decks/CMM_040823.csv")
 Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
 Marchesa <- read.csv("Decks/Marchesa_091023.csv")
+Galadriel <- read.csv("Decks/Galadriel_081123.csv")
 
 
 
@@ -70,13 +75,12 @@ Anikthea$commander_deck <- c("Anikthea, Hand of Erebos")
 CMM$commander_deck <- c("CMM")
 Ghyrson$commander_deck <- c("Ghyrson Starn, Kelermorph")
 Marchesa$commander_deck <- c("Queen Marchesa")
+Galadriel$commander_deck <- c("Galadriel, Light of Valinor")
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel)
 
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
-
-##Processing Files ----
 
 ##Splitting Mana Cost column into Constituent Mana Costs
 
@@ -128,7 +132,7 @@ Master_Data_Landless <- Master_Data %>%
   filter(types != "Land") %>%
   arrange(manaValue)
 
-
+#UI ----
 
 ui<- dashboardPage(
   
@@ -141,6 +145,8 @@ ui<- dashboardPage(
       menuItem(text = "Options", tabName = "OptionBoard")
     )
   ),
+  
+#Deck Dashboard ----
   
   dashboardBody(
     tabItems(
@@ -212,6 +218,9 @@ ui<- dashboardPage(
                       
                       
                ))),
+    
+# Deck Comparison Dashboard ----
+    
     tabPanel(title = "Overview",
              
              fluidRow(
@@ -253,23 +262,52 @@ ui<- dashboardPage(
     
   ),
   
-  tabItem(tabName = "CardBoard",
-          
-          fluidRow(
-            column(width = 6,
-          
-          
-          textInput("cardLookup", label = h3("Card Name"), value = "")),
-          
-          column(width = 6,
-          
-          checkboxGroupInput("manaLookup", label = h3("Mana Colours"), 
-                             choices = list("White" = 1, "Blue" = 2, "Black" = 3, "Red" = 4, "Green" =5),
-                             selected = 1)))
-          
-          
-          ),
+# Lookup Cards Dashboard ----
   
+tabItem(tabName = "CardBoard",
+        
+        fluidRow(
+          column(width = 6,
+                 
+                 
+                 textInput("cardLookup", label = h3("Card Name"), value = ""),
+                 
+                 textInput("descLookup", label = h3("Description Lookup"), value = ""),
+                 
+          ),
+          
+          column(width = 3,
+                 
+                 titlePanel(title = "Mana Identity"),
+                 checkboxInput(inputId = "whiteMana", label = "White Mana", value = FALSE),
+                 checkboxInput(inputId = "blueMana", label = "Blue Mana", value = FALSE),
+                 checkboxInput(inputId = "blackMana", label = "Black Mana", value = FALSE),
+                 checkboxInput(inputId = "redMana", label = "Red Mana", value = FALSE),
+                 checkboxInput(inputId = "greenMana", label ="Green Mana", value = FALSE)
+                 
+                 ),
+          
+          column(width = 3,
+                 
+                 checkboxGroupInput("typeLookup", label = h3("Super Type"), 
+                                    choices = list("Creature" = 1, "Sorcery" = 2, "Instant" = 3, "Artifact" = 4, "Enchantment" = 5, "Planeswalker" = 6, "Land" = 7, "Battle" = 8),
+                                    selected = 1))  
+          
+        ),
+        
+        fluidRow(
+          
+          titlePanel(title = "Cards"),
+          dataTableOutput("cardsReturn")
+          
+          
+          
+        )
+        
+),
+  
+# Options Dashboard ----
+
   tabItem(tabName = "OptionBoard",
           
           radioButtons("selectProvider", label = h3("Price Provider"),
@@ -289,7 +327,8 @@ ui<- dashboardPage(
 
 server <- function(input, output) {
   
-  
+# Server Deck Dashboard ----
+    
   output$CommanderCreature <- renderDataTable ({ merge(
     (Master_Data %>%
       filter(commander_deck == input$select) %>%
@@ -598,6 +637,16 @@ server <- function(input, output) {
       mutate(Sorceries = rowSums(across(c("Sorcery", "Tribal, Sorcery")), na.rm=TRUE))%>%
       select('Commander Deck', 'Deck Cost', 'Card Count', Creatures, Sorceries, Instants = Instant, Artifacts, Enchantments, Planewalkers = Planeswalker, Lands = Land)
 
+  })
+  
+  #Card Lookup Dashboard ----
+  
+  output$cardsReturn <- renderTable({
+#      if(!input$whiteMana && str_count(cards$colorIdentity,"W") == 0){filtered_cards <- cards%>% filter(cards$colorIdentity != "W", ))}#%>%
+#      if(!input$blueMana){filtered_cards <- cards[!grep1("U", cards$colorIdentity),]}%>%
+#      if(!input$blackMana){filtered_cards <- cards[!grep1("B", cards$colorIdentity),]}%>%
+#      if(!input$redMana){filtered_cards <- cards[!grep1("R", cards$colorIdentity),]}%>%
+#      if(!input$greenMana){filtered_cards <- cards[!grep1("G", cards$colorIdentity),]}
     
     
   })
@@ -638,6 +687,8 @@ server <- function(input, output) {
     cards <- read.csv("C:/MTGDataFiles/CardandPricesData/cards.csv")
     
   })}  
+  
+  output$value <- renderPrint({ input$DropSelec })
 
   
 }

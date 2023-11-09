@@ -84,6 +84,7 @@ Anikthea <- read.csv("Decks/Anikthea_230723.csv")
 CMM <- read.csv("Decks/CMM_040823.csv")
 Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
 Marchesa <- read.csv("Decks/Marchesa_091023.csv")
+Galadriel <- read.csv("Decks/Galadriel_081123.csv")
 
 
 Lathril$commander_deck <-c("Lathril, Blade of the Elves")
@@ -100,12 +101,9 @@ Mizzix$commander_deck <- c("Mizzix of the Izmagnus")
 Anikthea$commander_deck <- c("Anikthea, Hand of Erebos")
 CMM$commander_deck <- c("CMM")
 Ghyrson$commander_deck <- c("Ghyrson Starn, Kelermorph")
-Marchesa$commander_deck <- c("Queen Marchesa")
+Galadriel$commander_deck <- c("Galadriel, Light of Valinor")
 
-
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Liesa,Ghired,Ashcoat,Lorescale,Mizzix,Anikthea,CMM,Ghyrson,Marchesa)
-
-
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel)
 
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
@@ -326,3 +324,15 @@ check <- Master_Data %>%
   count(commander_deck)%>%
   pivot_wider(names_from = types, values_from = n)
 
+
+cards %>%
+  select(types)%>%
+  distinct(types)
+
+
+trueCheck <- TRUE
+
+cards%>%
+  if(trueCheck){filter(colorIdentity == "W")}else{filter(colorIdentity != "W")}
+
+if(trueCheck == TRUE){filter(colorIdentity == "W")}else{filter(colorIdentity != "W")}
