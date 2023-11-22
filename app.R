@@ -563,7 +563,7 @@ server <- function(input, output) {
   
   output$SaltScore <- renderPlot({
     ggplot(Master_Data %>%
-             #             filter(types != "Land")%>%
+             #filter(types != "Land")%>%
              select(commander_deck, edhrecSaltiness)%>%
              group_by(commander_deck) %>%
              summarise(SaltScore = mean(edhrecSaltiness, na.rm = TRUE)),
