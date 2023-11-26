@@ -57,6 +57,7 @@ CMM <- read.csv("Decks/CMM_040823.csv")
 Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
 Marchesa <- read.csv("Decks/Marchesa_091023.csv")
 Galadriel <- read.csv("Decks/Galadriel_081123.csv")
+Clavileno <- read.csv("Decks/Clavileno_231123.csv")
 
 
 
@@ -76,8 +77,9 @@ CMM$commander_deck <- c("CMM")
 Ghyrson$commander_deck <- c("Ghyrson Starn, Kelermorph")
 Marchesa$commander_deck <- c("Queen Marchesa")
 Galadriel$commander_deck <- c("Galadriel, Light of Valinor")
+Clavileno$commander_deck <- c("Clavileño, First of the Blessed")
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel, Clavileno)
 
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
