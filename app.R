@@ -272,9 +272,9 @@ tabItem(tabName = "CardBoard",
           column(width = 6,
                  
                  
-                 textInput("cardLookup", label = h3("Card Name"), value = ""),
+                 textInput("cardNameLookup", label = h3("Card Name"), value = ""),
                  
-                 textInput("descLookup", label = h3("Description Lookup"), value = ""),
+                 textInput("descLookup", label = h3("Description Lookup"), value = "")
                  
           ),
           
@@ -289,6 +289,8 @@ tabItem(tabName = "CardBoard",
                  
                  ),
           
+          actionButton("cardfilter", label = "Update Lookup"),
+          
           column(width = 3,
                  
                  checkboxGroupInput("typeLookup", label = h3("Super Type"), 
@@ -296,6 +298,8 @@ tabItem(tabName = "CardBoard",
                                     selected = 1))  
           
         ),
+        
+        
         
         fluidRow(
           
@@ -318,7 +322,7 @@ tabItem(tabName = "CardBoard",
           
           actionButton("priceUpdate", label = "Update Prices"),
           
-          actionButton("dbUpdate", label = "Update Card Database"),
+          actionButton("dbUpdate", label = "Update Card Database")
           
           )
   
@@ -643,15 +647,23 @@ server <- function(input, output) {
   
   #Card Lookup Dashboard ----
   
-  output$cardsReturn <- renderTable({
-#      if(!input$whiteMana && str_count(cards$colorIdentity,"W") == 0){filtered_cards <- cards%>% filter(cards$colorIdentity != "W", ))}#%>%
-#      if(!input$blueMana){filtered_cards <- cards[!grep1("U", cards$colorIdentity),]}%>%
-#      if(!input$blackMana){filtered_cards <- cards[!grep1("B", cards$colorIdentity),]}%>%
-#      if(!input$redMana){filtered_cards <- cards[!grep1("R", cards$colorIdentity),]}%>%
-#      if(!input$greenMana){filtered_cards <- cards[!grep1("G", cards$colorIdentity),]}
+  observeEvent(input$cardfilter, {
+    output$cardsReturn <- renderTable({
+    filtered_cards <- cards%>%
+      filter(grepl('Angel', name))
+    if(input$whiteMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('W', colorIdentity))}
+    if(input$blueMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('U', colorIdentity))}
+    if(input$blackMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('B', colorIdentity))}
+    if(input$redMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('R', colorIdentity))}
+    if(input$greenMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('G', colorIdentity))}
+    filtered_cards <- filtered_cards %>%
+      select(name, manaCost, type, power, toughness, text, printings)%>%
+      distinct(name, manaCost, type, power, toughness, text, printings)
     
+    #return(filtered_cards)
     
-  })
+    })
+    })
   
   {observeEvent(input$priceUpdate,{
     
