@@ -48,6 +48,8 @@ cardPricesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardPrices.csv")
 cardLegalitiesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardLegalities.csv")
 metadl <- read.csv("https://mtgjson.com/api/v5/csv/meta.csv")
 
+cardPricesdb <- read.csv("C:/MTGDataFiles/CardandPricesData/cardPrices.csv")
+
 cardPricesdb <- cardPricesdb %>%
   anti_join(cardPricesdl, by = c("cardFinish", "currency", "gameAvailability", "priceProvider", "providerListing")) %>%
   bind_rows(cardPricesdl)
@@ -73,7 +75,7 @@ Lathril <-read.csv("Decks/Lathril_0623.csv")
 Magda <- read.csv("Decks/Magda_0624.csv")
 Titania <- read.csv("Decks/Titania_230625.csv")
 Dina <- read.csv("Decks/Dina_290623.csv")
-Doran <- read.csv("Decks/Doran_290623.csv")
+Doran <- read.csv("Decks/Doran_250224.csv")
 Sakashima <- read.csv("Decks/Sakashima_020723.csv")
 Liesa <- read.csv("Decks/Liesa_020723.csv")
 Ghired <- read.csv("Decks/Ghired_020723.csv")
@@ -85,6 +87,11 @@ CMM <- read.csv("Decks/CMM_040823.csv")
 Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
 Marchesa <- read.csv("Decks/Marchesa_091023.csv")
 Galadriel <- read.csv("Decks/Galadriel_081123.csv")
+Clavileno <- read.csv("Decks/Clavileno_231123.csv")
+Rares <- read.csv("Decks/Rares.csv")
+Draft <- read.csv("Decks/Draft_120324.csv")
+Mycotyrant <- read.csv("Decks/Mycotyrant_130324.csv")
+
 
 
 Lathril$commander_deck <-c("Lathril, Blade of the Elves")
@@ -101,9 +108,14 @@ Mizzix$commander_deck <- c("Mizzix of the Izmagnus")
 Anikthea$commander_deck <- c("Anikthea, Hand of Erebos")
 CMM$commander_deck <- c("CMM")
 Ghyrson$commander_deck <- c("Ghyrson Starn, Kelermorph")
+Marchesa$commander_deck <- c("Queen Marchesa")
 Galadriel$commander_deck <- c("Galadriel, Light of Valinor")
+Clavileno$commander_deck <- c("Clavileño, First of the Blessed")
+Rares$commander_deck <- c("Rares")
+Draft$commander_deck <- c("Draft Cards")
+Mycotyrant$commander_deck <- c("The Mycotyrant")
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel, Clavileno, Rares, Draft, Mycotyrant)
 
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
@@ -336,3 +348,16 @@ cards%>%
   if(trueCheck){filter(colorIdentity == "W")}else{filter(colorIdentity != "W")}
 
 if(trueCheck == TRUE){filter(colorIdentity == "W")}else{filter(colorIdentity != "W")}
+
+
+
+df <- Master_Data %>%
+  filter(commander_deck == "Titania, Protector of Argoth")%>%
+  select(name) %>%
+  group_by(name) %>%
+  count(name)%>%
+  select(n, name)
+
+write.table(df, file = "data.txt", sep = "\t", row.names = FALSE)
+
+

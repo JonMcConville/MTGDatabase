@@ -108,3 +108,25 @@ cardPrices %>%
   distinct(priceProvider) %>%
   select(uuid)
   
+Amsterdam_Artists <- c("Magali Villeneuve", "Leon Tukker", "Kieran Yanner", "Jason Rainville", "Aurore Folny", "Milivoj Ceran", "Mathias Kollros", "Anna Steinbauer", "Alayna Danner")
+
+Artist_Check <- merge(cards %>%
+  select(artist, name, setCode, printings, rarity, edhrecSaltiness) %>%
+    filter(rarity == "rare" | rarity == "mythic" | rarity == "special" | rarity == "bonus")%>%
+  filter(artist %in% Amsterdam_Artists),
+  setsdl%>%
+    select(setCode = code, setName = name, releaseDate), 
+  by = 'setCode', all.x = TRUE)%>%
+  group_by(artist)%>%
+  arrange(desc(edhrecSaltiness))%>%
+  distinct(name, .keep_all = TRUE)
+
+
+merge(cards%>%
+  filter(rarity == "special")%>%
+  select(name, setCode),
+  setsdl%>%
+    select(setCode = code, setName = name, releaseDate), 
+  by = 'setCode', all.x = TRUE)
+  
+
