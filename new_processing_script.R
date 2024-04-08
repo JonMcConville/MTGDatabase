@@ -1,39 +1,66 @@
+
+
+
+
+
 # Load data files ----
 
-cards <- read.csv("DataFiles/cards.csv")
-sets <- read.csv("DataFiles/sets.csv")
-cardPrices <- read.csv("DataFiles/cardPrices.csv")
+cards <- read.csv("C:/MTGDataFiles/CardandPricesData/cards.csv")
+cardPrices <- read.csv("C:/MTGDataFiles/CardandPricesData/cardPrices.csv")
+legalities <- read.csv("C:/MTGDataFiles/CardandPricesData/cardsLegalities.csv")
+
+Lathril <-read.csv("Decks/Lathril_0623.csv")
+Magda <- read.csv("Decks/Magda_0624.csv")
+Titania <- read.csv("Decks/Titania_230625.csv")
+Dina <- read.csv("Decks/Dina_290623.csv")
+Doran <- read.csv("Decks/Doran_250224.csv")
+Sakashima <- read.csv("Decks/Sakashima_020723.csv")
+Liesa <- read.csv("Decks/Liesa_020723.csv")
+Ghired <- read.csv("Decks/Ghired_020723.csv")
+Ashcoat <- read.csv("Decks/Ashcoat_020723.csv")
+Lorescale <- read.csv("Decks/Lorescale_020723.csv")
+Mizzix <- read.csv("Decks/Mizzix_040723.csv")
+Anikthea <- read.csv("Decks/Anikthea_230723.csv")
+CMM <- read.csv("Decks/CMM_040823.csv")
+Ghyrson <- read.csv("Decks/Ghyrson_240923.csv")
+Marchesa <- read.csv("Decks/Marchesa_091023.csv")
+Galadriel <- read.csv("Decks/Galadriel_081123.csv")
+Clavileno <- read.csv("Decks/Clavileno_231123.csv")
+Rares <- read.csv("Decks/Rares.csv")
+Draft <- read.csv("Decks/Draft_120324.csv")
+Mycotyrant <- read.csv("Decks/Mycotyrant_130324.csv")
 
 
 
-Ghired <-read.csv("Decks/Ghired.csv")
-Dina <-read.csv("Decks/Dina.csv")
-Lathril <-read.csv("Decks/lathril.csv")
-Titania <-read.csv("Decks/Titania.csv")
-Magda <-read.csv("Decks/Magda.csv")
-Mizzix <-read.csv("Decks/Mizzix.csv")
-Liesa <-read.csv("Decks/Liesa.csv")
-Lorescale <-read.csv("Decks/Lorescale.csv")
-Dina_upgrade <-read.csv("Decks/Dina_Upgrade.csv")
-DinaV2 <-read.csv("Decks/Dina_v2.csv")
-Rats <-read.csv("Decks/Rats.csv")
+Lathril$commander_deck <-c("Lathril, Blade of the Elves")
+Magda$commander_deck <- c("Magda, Brazen Outlaw")
+Titania$commander_deck <- c("Titania, Protector of Argoth")
+Dina$commander_deck <- c("Dina, Soul Steeper")
+Doran$commander_deck <- c("Doran, the Siege Tower")
+Sakashima$commander_deck <- c("Sakashima the Impostor")
+Liesa$commander_deck <- c("Liesa, Shroud of Dusk")
+Ghired$commander_deck <- c("Ghired, Conclave Exile")
+Ashcoat$commander_deck <- c("Ashcoat of the Shadow Swarm")
+Lorescale$commander_deck <- c("Lorescale Coatl")
+Mizzix$commander_deck <- c("Mizzix of the Izmagnus")
+Anikthea$commander_deck <- c("Anikthea, Hand of Erebos")
+CMM$commander_deck <- c("CMM")
+Ghyrson$commander_deck <- c("Ghyrson Starn, Kelermorph")
+Marchesa$commander_deck <- c("Queen Marchesa")
+Galadriel$commander_deck <- c("Galadriel, Light of Valinor")
+Clavileno$commander_deck <- c("Clavileño, First of the Blessed")
+Rares$commander_deck <- c("Rares")
+Draft$commander_deck <- c("Draft Cards")
+Mycotyrant$commander_deck <- c("The Mycotyrant")
+
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel, Clavileno, Rares, Draft, Mycotyrant)
+
 
 #Data Cleanse and add markers ----
 
-sets$releaseDate <- ymd(sets$releaseDate)
-colnames(sets)[colnames(sets) == 'name'] <- 'setName'
+#sets$releaseDate <- ymd(sets$releaseDate)
+#colnames(sets)[colnames(sets) == 'name'] <- 'setName'
 
-Ghired$commander_deck <-c("Ghired, Conclave Exile")
-Dina$commander_deck <-c("Dina, Soul Steeper")
-Lathril$commander_deck <-c("Lathril, Blade of the Elves")
-Titania$commander_deck <-c("Titania, Protector of Argoth")
-Magda$commander_deck <-c("Magda, Brazen Outlaw")
-Mizzix$commander_deck <-c("Mizzix of the Izmagnus")
-Liesa$commander_deck <-c("Liesa, Shroud of Dusk")
-Lorescale$commander_deck <-c("Lorescale Coatl")
-Dina_upgrade$commander_deck <-c("Dina_upgrade")
-DinaV2$commander_deck <-c("DinaV2")
-Rats$commander_deck <-c("Rats")
 
 cards <- cbind(cards, GreenMana = str_count(cards$manaCost,"\\{G\\}"))
 cards <- cbind(cards, BlackMana = str_count(cards$manaCost,"\\{B\\}"))
@@ -75,7 +102,6 @@ cards <- cbind(cards, ManaDiscrep = cards$faceManaValue - cards$GreenMana - card
 
 #Merge Datasets ----
 
-MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lorescale,Dina_upgrade, DinaV2, Rats)
 
 ConsolidatedData <- merge(cards, sets, by.x = 'setCode', by.y = 'code', all.x = TRUE)
 
