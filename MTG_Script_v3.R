@@ -179,6 +179,17 @@ Master_Data_Landless <- Master_Data %>%
 
 # Play Area ----
 
+Draft_Card_Text <- Master_Data%>%
+  filter(commander_deck == "Draft Cards")%>%
+  select(colorIdentity, keywords, manaCost, name, type, text, types, )
+
+
+
+Tokens <- Master_Data%>%
+  select(name, text)
+
+Tokens <- cbind(Tokens, createtoken = str_count(Tokens$text,"\\{T\\}"))
+
 
 
 merge(
@@ -352,11 +363,15 @@ if(trueCheck == TRUE){filter(colorIdentity == "W")}else{filter(colorIdentity != 
 
 
 df <- Master_Data %>%
-  filter(commander_deck == "Titania, Protector of Argoth")%>%
-  select(name) %>%
+  filter(commander_deck == "Draft Cards")%>%
+  distinct(name, .keep_all = TRUE)%>%
+  select(name, manaCost, type, types, power, toughness, text, keywords, colorIdentity) %>%
+#  filter(!str_detect(colorIdentity, "U"))%>%
+#  filter(!str_detect(colorIdentity, "W"))%>%
+#  filter(!str_detect(colorIdentity, "R"))%>%
   group_by(name) %>%
   count(name)%>%
-  select(n, name)
+  select(name)
 
 write.table(df, file = "data.txt", sep = "\t", row.names = FALSE)
 

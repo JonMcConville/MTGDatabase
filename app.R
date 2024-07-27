@@ -657,11 +657,21 @@ server <- function(input, output) {
     output$cardsReturn <- renderTable({
     filtered_cards <- cards%>%
       filter(grepl('Angel', name))
-    if(input$whiteMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('W', colorIdentity))}
-    if(input$blueMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('U', colorIdentity))}
-    if(input$blackMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('B', colorIdentity))}
-    if(input$redMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('R', colorIdentity))}
-    if(input$greenMana == TRUE){filtered_cards <- filtered_cards %>% filter(colorIdentity == "" | !grepl('G', colorIdentity))}
+    if(input$whiteMana == FALSE){
+      filtered_cards <- filtered_cards %>% filter(colorIdentity == !grepl('W', colorIdentity))
+      }
+    if(input$blueMana == FALSE){
+      filtered_cards <- filtered_cards %>% filter(colorIdentity == !grepl('U', colorIdentity))
+      }
+    if(input$blackMana == FALSE){
+      filtered_cards <- filtered_cards %>% filter(colorIdentity == !grepl('B', colorIdentity))
+      }
+    if(input$redMana == FALSE){
+      filtered_cards <- filtered_cards %>% filter(colorIdentity == !grepl('R', colorIdentity))
+      }
+    if(input$greenMana == FALSE){
+      filtered_cards <- filtered_cards %>% filter(colorIdentity == !grepl('G', colorIdentity))
+      }
     filtered_cards <- filtered_cards %>%
       select(name, manaCost, type, power, toughness, text, printings)%>%
       distinct(name, manaCost, type, power, toughness, text, printings)

@@ -10,7 +10,7 @@ cardNumber,setCode,commander,foil
 50,BRC,,
 58,ZNC,,
 59,ZNC,,
-62,ZNC,,
+119,ZNC,,
 350,RVR,,
 65,C21,,
 69,ZNC,,
@@ -34,7 +34,7 @@ cardNumber,setCode,commander,foil
 300,MH2,,
 151,DMR,,
 154,2X2,,
-155,CMA,,
+178,ZNR,,
 164,C19,,
 169,WAR,,
 170,BRO,,
@@ -82,7 +82,7 @@ cardNumber,setCode,commander,foil
 302,NEO,,Y
 302,NEO,,Y
 303,2X2,,
-307,ZNR,,
+155,CMA,,
 308,ZNR,,
 316,2X2,,
 181,MKM,,
