@@ -147,7 +147,7 @@ Master_Data_Landless <- Master_Data %>%
 
 
 Master_Data %>%
-  filter(commander_deck == "DinaV2") %>%
+  filter(commander_deck == "Rats") %>%
 #  filter(types!= "Land") %>%
   select(card_name, manaCost, types, manaValue) %>%
   arrange(types, card_name) %>%
@@ -273,7 +273,7 @@ ggplot( data.frame( ManaColour = c("Green", "Black", "Blue", "White", "Red","Col
 
 ## Check cards that approximately match wordstring ----
 
-agrep("Darkbore Pathway", cards_slim$name, max.distance = .25, value = TRUE)
+agrep("Okiba Reckoner Raid", cards_slim$name, max.distance = .25, value = TRUE)
 
 everything_pivot <- qhpvt(cards_slim,"colorIdentity","types","n()")
 
