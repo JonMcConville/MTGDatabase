@@ -11,6 +11,29 @@ library(pivottabler)
 library(shiny)
 library(shinydashboard)
 
+#Updating csv files from online database ----
+
+cardsdl <- read.csv("https://mtgjson.com/api/v5/csv/cards.csv")
+setsdl <- read.csv("https://mtgjson.com/api/v5/csv/sets.csv")
+tokensdl <- read.csv("https://mtgjson.com/api/v5/csv/tokens.csv")
+cardRulingsdl <- read.csv("https://mtgjson.com/api/v5/csv/cardRulings.csv")
+cardPricesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardPrices.csv")
+cardLegalitiesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardLegalities.csv")
+metadl <- read.csv("https://mtgjson.com/api/v5/csv/meta.csv")
+
+cardPricesdb <- cardPricesdb %>%
+  anti_join(cardPricesdl, by = c("cardFinish", "currency", "gameAvailability", "priceProvider", "providerListing")) %>%
+  bind_rows(cardPricesdl)
+
+write.csv(cardsdl, "DataFiles/cards.csv", row.names=FALSE)
+write.csv(setsdl, "DataFiles/sets.csv", row.names=FALSE)
+write.csv(tokensdl, "DataFiles/tokens.csv", row.names=FALSE)
+write.csv(cardRulingsdl, "DataFiles/cardRulings.csv", row.names=FALSE)
+write.csv(cardPricesdb, "DataFiles/cardPrices.csv", row.names=FALSE)
+write.csv(cardLegalitiesdl, "DataFiles/cardsLegalities.csv", row.names=FALSE)
+write.csv(metadl, "Datafiles/meta.csv", row.names=FALSE)
+
+
 ##Reading in Data ----
 
 cards <- read.csv("cards.csv")
@@ -24,7 +47,7 @@ Liesa <-read.csv("Decks/Liesa.csv")
 Lorescale <-read.csv("Decks/Lorescale.csv")
 Dina_upgrade <-read.csv("Decks/Dina_Upgrade.csv")
 DinaV2 <-read.csv("Decks/Dina_v2.csv")
-Rats <- read.csv("Decks/Rats.csv")
+Rats <-read.csv("Decks/Rats.csv")
 
 
 Ghired$commander_deck <-c("Ghired, Conclave Exile")
@@ -50,7 +73,7 @@ MasterFrame <- rbind(Ghired, Dina, Lathril, Titania, Magda, Mizzix, Liesa, Lores
 
 cards_slim <- cards %>%
   
-  select(index, id, colorIdentity, colorIndicator, colors,
+  select(id, colorIdentity, colorIndicator, colors,
          convertedManaCost, edhrecRank, edhrecSaltiness, faceConvertedManaCost, faceFlavorName, faceManaValue, faceName,
          hand, hasAlternativeDeckLimit, hasContentWarning,
          isAlternative,
@@ -294,3 +317,23 @@ Master_Data %>%
          select(commander_deck, edhrecSaltiness)%>%
          group_by(commander_deck) %>%
          summarise(SaltScore = mean(edhrecSaltiness, na.rm = TRUE))
+
+
+Master_Data %>%
+#  filter(commander_deck == input$select) %>%
+#  filter(commander =="Y") %>%
+  group_by(card_name,manaCost, uuid)%>%
+  count(card_name) %>%
+  select(n, card_name, manaCost, uuid)
+
+colnames(cards_slim)
+
+cardPricesdb <- cardPricesdb %>%
+  anti_join(cardPricesdl, by = c("cardFinish", "currency", "gameAvailability", "priceProvider", "providerListing")) %>%
+  bind_rows(cardPricesdl)
+
+
+
+Master_Data %>%
+  select(types)%>%
+  distinct(types)
