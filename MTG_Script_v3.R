@@ -58,7 +58,7 @@ write.csv(cardsdl, "C:/MTGDataFiles/CardandPricesData/cards.csv", row.names=FALS
 write.csv(setsdl, "C:/MTGDataFiles/CardandPricesData/sets.csv", row.names=FALSE)
 write.csv(tokensdl, "C:/MTGDataFiles/CardandPricesData/tokens.csv", row.names=FALSE)
 write.csv(cardRulingsdl, "C:/MTGDataFiles/CardandPricesData/cardRulings.csv", row.names=FALSE)
-write.csv(cardPricesdb, "C:/MTGDataFiles/CardandPricesData/cardPrices.csv", row.names=FALSE)
+write.csv(cardPricesdl, "C:/MTGDataFiles/CardandPricesData/cardPrices.csv", row.names=FALSE)
 write.csv(cardLegalitiesdl, "C:/MTGDataFiles/CardandPricesData/cardsLegalities.csv", row.names=FALSE)
 write.csv(metadl, "C:/MTGDataFiles/CardandPricesData/meta.csv", row.names=FALSE)
 
