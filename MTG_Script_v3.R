@@ -364,11 +364,12 @@ if(trueCheck == TRUE){filter(colorIdentity == "W")}else{filter(colorIdentity != 
 
 df <- Master_Data %>%
   filter(commander_deck == "Draft Cards")%>%
+  filter(str_detect(text, "life") | str_detect(keywords, "Lifelink") | str_detect(text, "Life"))%>%
   distinct(name, .keep_all = TRUE)%>%
   select(name, manaCost, type, types, power, toughness, text, keywords, colorIdentity) %>%
-#  filter(!str_detect(colorIdentity, "U"))%>%
-#  filter(!str_detect(colorIdentity, "W"))%>%
-#  filter(!str_detect(colorIdentity, "R"))%>%
+  filter(!str_detect(colorIdentity, "U"))%>%
+  filter(!str_detect(colorIdentity, "W"))%>%
+  filter(!str_detect(colorIdentity, "R"))%>%
   group_by(name) %>%
   count(name)%>%
   select(name)
