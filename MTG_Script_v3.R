@@ -91,6 +91,7 @@ Clavileno <- read.csv("Decks/Clavileno_231123.csv")
 Rares <- read.csv("Decks/Rares.csv")
 Draft <- read.csv("Decks/Draft_120324.csv")
 Mycotyrant <- read.csv("Decks/Mycotyrant_130324.csv")
+Draft25 <- read.csv("Decks/Draft2025_220225.csv")
 
 
 
@@ -114,8 +115,9 @@ Clavileno$commander_deck <- c("Clavileño, First of the Blessed")
 Rares$commander_deck <- c("Rares")
 Draft$commander_deck <- c("Draft Cards")
 Mycotyrant$commander_deck <- c("The Mycotyrant")
+Draft25$commander_deck <- c("Draft 25")
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel, Clavileno, Rares, Draft, Mycotyrant)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel, Clavileno, Rares, Draft, Mycotyrant, Draft25)
 
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is

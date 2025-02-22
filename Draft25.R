@@ -1,5 +1,8 @@
 Draft25 <- Master_Data %>%
   filter(commander_deck == "Draft 25") %>%
+#  filter(grepl("Vehicle | Saddle", text, ignore.case = TRUE))%>%
+#  filter(grepl("Destroy | Exile", text, ignore.case = TRUE))%>%
+  filter(grepl("Creature", types, ignore.case = TRUE))%>%
 #  filter(!grepl("W", colorIdentity, ignore.case = TRUE))%>%
 #  filter(!grepl("U", colorIdentity, ignore.case = TRUE))%>%
 #  filter(!grepl("B", colorIdentity, ignore.case = TRUE))%>%
@@ -22,13 +25,18 @@ summary_df <- data.frame(
   Izzet = sum(!grepl("W|B|G", Draft25$colorIdentity)),
   Simic = sum(!grepl("W|B|R", Draft25$colorIdentity)),
   Rakdos = sum(!grepl("W|U|G", Draft25$colorIdentity)),
+  Golgari = sum(!grepl("W|U|R", Draft25$colorIdentity)),
   Gruul = sum(!grepl("W|U|B", Draft25$colorIdentity)),
   Esper = sum(!grepl("R|G", Draft25$colorIdentity)),
   Jeskai = sum(!grepl("B|G", Draft25$colorIdentity)),
+  Mardu = sum(!grepl("U|G", Draft25$colorIdentity)),
   Bant = sum(!grepl("B|R", Draft25$colorIdentity)),
+  Abzan = sum(!grepl("U|R", Draft25$colorIdentity)),
+  Naya = sum(!grepl("U|B", Draft25$colorIdentity)),
   Grixis = sum(!grepl("W|G", Draft25$colorIdentity)),
   Sultai = sum(!grepl("W|R", Draft25$colorIdentity)),
-  Jund = sum(!grepl("W|B", Draft25$colorIdentity)),
+  Temur = sum(!grepl("W|B", Draft25$colorIdentity)),
+  Jund = sum(!grepl("W|U", Draft25$colorIdentity)),
   Yore = sum(!grepl("G", Draft25$colorIdentity)),
   Witch = sum(!grepl("R", Draft25$colorIdentity)),
   Ink = sum(!grepl("B", Draft25$colorIdentity)),
@@ -44,11 +52,11 @@ summary_df$color <- factor(summary_df$color, levels = unique(summary_df$color))
 ggplot(summary_df, aes(x = color, y = number)) +
   geom_bar(stat = "identity", fill = "skyblue", color = "black") +
   theme_minimal() +
-  labs(title = "Category Counts", x = "color", y = "viable cards")
+  labs(title = "Category Counts", x = "Colour", y = "Viable Cards")
 
 
 
-Summary$Gruul <-
+write.csv(Draft25%>%select(name),"Draft25.csv",row.names = FALSE)
 
 
 deckstats <- merge(Master_Data,
