@@ -1,15 +1,18 @@
-Draft25 <- Master_Data %>%
+Draft255 <- Master_Data %>%
   filter(commander_deck == "Draft 25") %>%
 #  filter(grepl("Vehicle | Saddle", text, ignore.case = TRUE))%>%
 #  filter(grepl("Destroy | Exile", text, ignore.case = TRUE))%>%
-  filter(grepl("Creature", types, ignore.case = TRUE))%>%
+#  filter(grepl("Creature", types, ignore.case = TRUE))%>%
 #  filter(!grepl("W", colorIdentity, ignore.case = TRUE))%>%
 #  filter(!grepl("U", colorIdentity, ignore.case = TRUE))%>%
-#  filter(!grepl("B", colorIdentity, ignore.case = TRUE))%>%
-#  filter(!grepl("R", colorIdentity, ignore.case = TRUE))%>%
-#  filter(!grepl("G", colorIdentity, ignore.case = TRUE))%>%
-  select(name, colorIdentity, manaCost, text, type, types, subtypes, edhrecSaltiness)%>%
+  filter(!grepl("B", colorIdentity, ignore.case = TRUE))%>%
+  filter(!grepl("R", colorIdentity, ignore.case = TRUE))%>%
+  filter(!grepl("G", colorIdentity, ignore.case = TRUE))%>%
+  filter(grepl("artifact", types, ignore.case = TRUE))%>%
+  select(name, types, colorIdentity, manaCost, text, type, subtypes, edhrecSaltiness)%>%
   distinct(name, .keep_all = TRUE)
+
+write.csv(Draft255,"Draft255.csv", row.names= FALSE)
 
 summary_df <- data.frame(
   White = sum(!grepl("U|B|R|G", Draft25$colorIdentity)),

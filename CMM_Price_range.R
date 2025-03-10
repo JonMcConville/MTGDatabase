@@ -49,7 +49,7 @@ sample_n(CMMComplete %>%
 
 
 
-Checklist4 <- data_frame(Checklist5)
+Checklist4 <- tibble(Checklist5)
 Checklist6 <- as.numeric(unlist(Checklist4$Checklist5))
 
 hist(Checklist6*0.86,breaks=40)
