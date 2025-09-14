@@ -17,25 +17,6 @@ library(shinydashboard)
 CaPData_path <- "C:/MTGDataFiles/CardandPricesData"
 Deck_path <- "C:/MTGDataFiles/Decks"
 
-# Check if the folder exists
-if (!file.exists(CaPData_path)) {
-  # If the folder doesn't exist, create it
-  dir.create(CaPData_path, recursive = TRUE)
-  cat("Folder created:", CaPData_path, "\n")
-} else {
-  cat("Folder already exists:", CaPData_path, "\n")
-}
-
-# Check if the folder exists
-if (!file.exists(Deck_path)) {
-  # If the folder doesn't exist, create it
-  dir.create(Deck_path, recursive = TRUE)
-  cat("Folder created:", Deck_path, "\n")
-} else {
-  cat("Folder already exists:", Deck_path, "\n")
-}
-
-
 
 cards <- read.csv("C:/MTGDataFiles/CardandPricesData/cards.csv")
 cardPrices <- read.csv("C:/MTGDataFiles/CardandPricesData/cardPrices.csv")
@@ -61,6 +42,7 @@ Clavileno <- read.csv("Decks/Clavileno_231123.csv")
 Rares <- read.csv("Decks/Rares.csv")
 Draft <- read.csv("Decks/Draft_120324.csv")
 Mycotyrant <- read.csv("Decks/Mycotyrant_130324.csv")
+Zahur <- read.csv("Decks/Zahur_140925.csv")
 
 
 
@@ -84,8 +66,9 @@ Clavileno$commander_deck <- c("Clavileño, First of the Blessed")
 Rares$commander_deck <- c("Rares")
 Draft$commander_deck <- c("Draft Cards")
 Mycotyrant$commander_deck <- c("The Mycotyrant")
+Zahur$commander_deck <- c("Zahur, Glory's Past")
 
-MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel, Clavileno, Rares, Draft, Mycotyrant)
+MasterFrame <- rbind(Lathril,Magda,Titania,Dina,Doran,Sakashima,Ghired,Ashcoat,Lorescale,Anikthea,Ghyrson,Marchesa, Galadriel, Clavileno, Rares, Draft, Mycotyrant, Zahur)
 
 
 ## TestCheck <-read.delim("C:/SQLd/mtg/mtg/Downloaded Decks/Lathril-Elven Army.txt", header = FALSE) #TODO Check what this is
@@ -190,29 +173,29 @@ ui<- dashboardPage(
                column(width = 7,
                       
                       titlePanel(title = "Commander"),
-                      dataTableOutput("CommanderCreature"),
+                      DT::DTOutput("CommanderCreature"),
                       
                       
                       titlePanel(title = "Creatures"),
-                      dataTableOutput("DeckCreatures"),
+                      DT::DTOutput("DeckCreatures"),
                       
                       titlePanel(title = "Sorceries"),
-                      dataTableOutput("Sorcery"),
+                      DT::DTOutput("Sorcery"),
                       
                       titlePanel(title = "Instants"),
-                      dataTableOutput("Instant"),
+                      DT::DTOutput("Instant"),
                       
                       titlePanel(title = "Artifacts"),
-                      dataTableOutput("Artifact"),
+                      DT::DTOutput("Artifact"),
                       
                       titlePanel(title = "Enchantments"),
-                      dataTableOutput("Enchantment"),
+                      DT::DTOutput("Enchantment"),
                       
                       titlePanel(title = "Planeswalkers"),
-                      dataTableOutput("Planeswalker"),
+                      DT::DTOutput("Planeswalker"),
                       
                       titlePanel(title = "Lands"),
-                      dataTableOutput("Land")
+                      DT::DTOutput("Land")
                ),
                
                column(width = 5,
@@ -259,7 +242,7 @@ ui<- dashboardPage(
             column(width = 12,
                    
               titlePanel(title = "Deck Costs - Absolute"),
-              dataTableOutput("deckPrice"))                   
+              DT::DTOutput("deckPrice"))                   
                    )
 
 
@@ -310,7 +293,7 @@ tabItem(tabName = "CardBoard",
         fluidRow(
           
           titlePanel(title = "Cards"),
-          dataTableOutput("cardsReturn")
+          DT::DTOutput("cardsReturn")
           
           
           
@@ -341,7 +324,7 @@ server <- function(input, output) {
   
 # Server Deck Dashboard ----
     
-  output$CommanderCreature <- renderDataTable ({ merge(
+  output$CommanderCreature <- DT::renderDT ({ merge(
     (Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(commander =="Y") %>%
@@ -362,7 +345,7 @@ server <- function(input, output) {
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$DeckCreatures <- renderDataTable({ merge(
+  output$DeckCreatures <- DT::renderDT({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(name != input$select) %>%
@@ -386,10 +369,10 @@ server <- function(input, output) {
     columnDefs = list(list(width = '20px', targets = c(0)))
   )) 
   
-  output$Sorcery <- renderDataTable({ merge(
+  output$Sorcery <- DT::renderDT({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
-      filter(types == "Sorcery" | types =="Tribal,Sorcery") %>%
+      filter(types == "Sorcery" | types =="Kindred, Sorcery") %>%
       select(name, manaCost, manaValue, uuid, edhrecSaltiness) %>%
       group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
@@ -408,7 +391,7 @@ server <- function(input, output) {
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Instant <- renderDataTable({ merge(
+  output$Instant <- DT::renderDT({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Instant") %>%
@@ -430,7 +413,7 @@ server <- function(input, output) {
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Artifact <- renderDataTable({ merge(
+  output$Artifact <- DT::renderDT({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Artifact") %>%
@@ -452,10 +435,10 @@ server <- function(input, output) {
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Enchantment <- renderDataTable({ merge(
+  output$Enchantment <- DT::renderDT({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
-      filter(types == "Enchantment" | types == "Tribal, Enchantment") %>%
+      filter(types == "Enchantment" | types == "Kindred, Enchantment") %>%
       select(name, manaCost, manaValue, uuid, edhrecSaltiness) %>%
       group_by(name, manaCost, uuid, edhrecSaltiness) %>%
       count(name)%>%
@@ -473,7 +456,7 @@ server <- function(input, output) {
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Planeswalker <- renderDataTable({ merge(
+  output$Planeswalker <- DT::renderDT({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Planeswalker") %>%
@@ -494,7 +477,7 @@ server <- function(input, output) {
     columnDefs = list(list(width = '20px', targets = c(0)))
   ))
   
-  output$Land <- renderDataTable({ merge(
+  output$Land <- DT::renderDT({ merge(
     Master_Data %>%
       filter(commander_deck == input$select) %>%
       filter(types == "Land") %>%
@@ -614,7 +597,7 @@ server <- function(input, output) {
   })
   
   
-  output$deckPrice <- renderDataTable({
+  output$deckPrice <- DT::renderDT({
     merge(left_join(
       Master_Data%>%
         select(commander_deck)%>%
@@ -644,9 +627,9 @@ server <- function(input, output) {
         pivot_wider(names_from = types, values_from = n),
       by.x = 'Commander Deck', by.y = 'commander_deck')%>%
       mutate(Creatures = rowSums(across(c("Creature", "Enchantment, Creature", "Artifact, Creature", "Land, Creature")), na.rm=TRUE))%>%
-      mutate(Enchantments = rowSums(across(c("Enchantment", "Tribal, Enchantment")), na.rm=TRUE))%>%
+      mutate(Enchantments = rowSums(across(c("Enchantment", "Kindred, Enchantment")), na.rm=TRUE))%>%
       mutate(Artifacts = rowSums(across(c("Artifact", "Enchantment, Artifact")), na.rm=TRUE))%>%
-      mutate(Sorceries = rowSums(across(c("Sorcery", "Tribal, Sorcery")), na.rm=TRUE))%>%
+      mutate(Sorceries = rowSums(across(c("Sorcery", "Kindred, Sorcery")), na.rm=TRUE))%>%
       select('Commander Deck', 'Deck Cost', 'Card Count', Creatures, Sorceries, Instants = Instant, Artifacts, Enchantments, Planewalkers = Planeswalker, Lands = Land)
 
   })
@@ -654,7 +637,7 @@ server <- function(input, output) {
   #Card Lookup Dashboard ----
   
   observeEvent(input$cardfilter, {
-    output$cardsReturn <- renderTable({
+    output$cardsReturn <- DT::renderDT({
     filtered_cards <- cards%>%
       filter(grepl('Angel', name))
     if(input$whiteMana == FALSE){

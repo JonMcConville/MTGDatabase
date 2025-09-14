@@ -10,6 +10,7 @@ library(wesanderson)
 library(pivottabler)
 library(shiny)
 library(shinydashboard)
+library(jsonlite)
 
 
 # Define the folder path you want to check and create if it doesn't exist
@@ -47,12 +48,19 @@ cardRulingsdl <- read.csv("https://mtgjson.com/api/v5/csv/cardRulings.csv")
 cardPricesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardPrices.csv")
 cardLegalitiesdl <- read.csv("https://mtgjson.com/api/v5/csv/cardLegalities.csv")
 metadl <- read.csv("https://mtgjson.com/api/v5/csv/meta.csv")
+cardidentifiersdl <- read.csv("https://mtgjson.com/api/v5/csv/cardIdentifiers.csv")
 
 cardPricesdb <- read.csv("C:/MTGDataFiles/CardandPricesData/cardPrices.csv")
 
 cardPricesdb <- cardPricesdb %>%
   anti_join(cardPricesdl, by = c("cardFinish", "currency", "gameAvailability", "priceProvider", "providerListing")) %>%
   bind_rows(cardPricesdl)
+
+cardsdl <- merge(cardsdl, cardidentifiersdl, by.x = 'uuid', by.y = 'uuid', all.x = TRUE)
+
+cardsdl$url <- paste0("https://cards.scryfall.io/large/front/", str_sub(cardsdl$scryfallId, 1, 1), "/", str_sub(cardsdl$scryfallId, 2, 2), "/", cardsdl$scryfallId, ".jpg")
+
+
 
 write.csv(cardsdl, "C:/MTGDataFiles/CardandPricesData/cards.csv", row.names=FALSE)
 write.csv(setsdl, "C:/MTGDataFiles/CardandPricesData/sets.csv", row.names=FALSE)
@@ -61,6 +69,7 @@ write.csv(cardRulingsdl, "C:/MTGDataFiles/CardandPricesData/cardRulings.csv", ro
 write.csv(cardPricesdb, "C:/MTGDataFiles/CardandPricesData/cardPrices.csv", row.names=FALSE)
 write.csv(cardLegalitiesdl, "C:/MTGDataFiles/CardandPricesData/cardsLegalities.csv", row.names=FALSE)
 write.csv(metadl, "C:/MTGDataFiles/CardandPricesData/meta.csv", row.names=FALSE)
+write.csv(cardidentifiersdl, "C:/MTGDataFiles/CardandPricesData/cardidentifiers.csv", row.names=FALSE)
 
 
 
@@ -195,7 +204,7 @@ Tokens <- cbind(Tokens, createtoken = str_count(Tokens$text,"\\{T\\}"))
 merge(
   Master_Data %>%
 #    filter(commander_deck == input$select) %>%
-#    filter(types == "Sorcery" | types =="Tribal,Sorcery") %>%
+#    filter(types == "Sorcery" | types =="Kindred, Sorcery") %>%
     select(commander_deck, name, manaCost, manaValue, uuid) %>%
     group_by(commander_deck, name, manaCost, uuid) %>%
     count(name)%>%
